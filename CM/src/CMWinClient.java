@@ -1053,13 +1053,16 @@ public class CMWinClient extends JFrame {
 				m_clientStub.setServerInfo(strNewServerAddress, nNewServerPort);
 		}
 		
+		long lStart = System.currentTimeMillis();
 		bRet = m_clientStub.startCM();
+		long lDelay = System.currentTimeMillis() - lStart;
 		if(!bRet)
 		{
 			printStyledMessage("CM initialization error!\n", "bold");
 		}
 		else
 		{
+			printMessage("Start delay: "+lDelay+" ms.\n");
 			printStyledMessage("Client CM starts.\n", "bold");
 			printStyledMessage("Type \"0\" for menu.\n", "regular");
 			// change the appearance of buttons in the client window frame
