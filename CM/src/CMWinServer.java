@@ -1876,9 +1876,11 @@ public class CMWinServer extends JFrame {
 			try {
 				FileWriter fw = new FileWriter(file, true);
 				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter pw = new PrintWriter(fw, true);
+				PrintWriter pw = new PrintWriter(bw, true);
 				pw.print(strLog);
 				pw.close();
+				bw.close();
+				fw.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1906,7 +1908,24 @@ public class CMWinServer extends JFrame {
 		String strFormatDateTime = m_dateFormat.format(System.currentTimeMillis());
 		String strLog = "["+strFormatDateTime+"] "+strText;
 		printStyledMessage(strLog, strStyleName);
-		
+
+		if(bFile)
+		{
+			File file = new File("server-log.txt");
+			try {
+				FileWriter fw = new FileWriter(file, true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter pw = new PrintWriter(bw, true);
+				pw.print(strLog);
+				pw.close();
+				bw.close();
+				fw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 	}
 		
 	public void printImage(String strPath)
