@@ -4,6 +4,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Hashtable;
@@ -52,8 +53,12 @@ public class CMWinServer extends JFrame {
 	private CMWinServerEventHandler m_eventHandler;
 	private CMSNSUserAccessSimulator m_uaSim;
 	
+	private SimpleDateFormat m_dateFormat;
+	
 	CMWinServer()
 	{
+	
+		m_dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		MyKeyListener cmKeyListener = new MyKeyListener();
 		MyActionListener cmActionListener = new MyActionListener();
@@ -1859,6 +1864,28 @@ public class CMWinServer extends JFrame {
 		return;
 	}
 	
+	public void printLog(String strText, boolean bFile)
+	{
+		String strFormatDateTime = m_dateFormat.format(System.currentTimeMillis());
+		String strLog = "["+strFormatDateTime+"] "+strText;
+		printMessage(strLog);
+		
+		if(bFile)
+		{
+			File file = new File("server-log.txt");
+			try {
+				FileWriter fw = new FileWriter(file, true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter pw = new PrintWriter(fw, true);
+				pw.print(strLog);
+				pw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void printStyledMessage(String strText, String strStyleName)
 	{
 		StyledDocument doc = m_outTextPane.getStyledDocument();
@@ -1872,6 +1899,14 @@ public class CMWinServer extends JFrame {
 		}
 		
 		return;
+	}
+	
+	public void printStyledLog(String strText, String strStyleName, boolean bFile)
+	{
+		String strFormatDateTime = m_dateFormat.format(System.currentTimeMillis());
+		String strLog = "["+strFormatDateTime+"] "+strText;
+		printStyledMessage(strLog, strStyleName);
+		
 	}
 		
 	public void printImage(String strPath)

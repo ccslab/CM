@@ -98,8 +98,9 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		switch(se.getID())
 		{
 		case CMSessionEvent.LOGIN:
-			//System.out.println("["+se.getUserName()+"] requests login.");
-			printMessage("["+se.getUserName()+"] requests login.\n");
+			//printMessage("["+se.getUserName()+"] requests login.\n");
+			printLog("["+se.getUserName()+"] requests login, host["+se.getHostAddress()+
+					"].\n", true);
 			if(confInfo.isLoginScheme())
 			{
 				// user authentication...
@@ -108,19 +109,21 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 						m_serverStub.getCMInfo());
 				if(!ret)
 				{
-					printMessage("["+se.getUserName()+"] authentication fails!\n");
+					//printMessage("["+se.getUserName()+"] authentication fails!\n");
+					printLog("["+se.getUserName()+"] authentication fails!\n", true);
 					m_serverStub.replyEvent(cme, 0);
 				}
 				else
 				{
-					printMessage("["+se.getUserName()+"] authentication succeeded.\n");
+					//printMessage("["+se.getUserName()+"] authentication succeeded.\n");
+					printLog("["+se.getUserName()+"] authentication succeeded.\n", true);
 					m_serverStub.replyEvent(cme, 1);
 				}
 			}
 			break;
 		case CMSessionEvent.LOGOUT:
-			//System.out.println("["+se.getUserName()+"] logs out.");
-			printMessage("["+se.getUserName()+"] logs out.\n");
+			//printMessage("["+se.getUserName()+"] logs out.\n");
+			printLog("["+se.getUserName()+"] logs out.\n", true);
 			break;
 		case CMSessionEvent.REQUEST_SESSION_INFO:
 			//System.out.println("["+se.getUserName()+"] requests session information.");
@@ -807,11 +810,12 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 	
 	private void printMessage(String strText)
 	{
-		/*
-		m_outTextArea.append(strText);
-		m_outTextArea.setCaretPosition(m_outTextArea.getDocument().getLength());
-		*/
 		m_server.printMessage(strText);
+	}
+	
+	private void printLog(String strText, boolean bFile)
+	{
+		m_server.printLog(strText, bFile);
 	}
 	
 	/*
