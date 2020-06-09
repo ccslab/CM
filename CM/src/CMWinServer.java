@@ -395,6 +395,12 @@ public class CMWinServer extends JFrame {
 		case 106:	// send event with wrong type
 			sendEventWithWrongEventType();
 			break;
+		case 107: 	// init cds final exam 2020-1
+			initCDSFinalExam2020_1();
+			break;
+		case 108: 	// init ds final exam 2020-1
+			initDSFinalExam2020_1();
+			break;
 		default:
 			//System.out.println("Unknown command.");
 			printStyledMessage("Unknown command.\n", "bold");
@@ -433,6 +439,8 @@ public class CMWinServer extends JFrame {
 		printMessage("103: start SNS user access simulation and measure prefetch accuracy\n");
 		printMessage("104: start and write recent SNS access history simulation to CM DB\n");
 		printMessage("105: send event with wrong bytes, 106: send event with wrong type\n");
+		printMessage("107: init 2020-1 cds final exam\n");
+		printMessage("108: init 2020-1 ds final exam\n");
 	}
 	
 	public void updateTitle()
@@ -1847,6 +1855,92 @@ public class CMWinServer extends JFrame {
 		CMDummyEvent due = new CMDummyEvent();
 		due.setType(-1);	// set wrong event type
 		m_serverStub.send(due, strTarget);
+	}
+	
+	public void initCDSFinalExam2020_1()
+	{
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream("attendance-book-cds-2020-1.txt");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		m_eventHandler.setM_nCount(0);
+		m_eventHandler.setM_nScore(10);
+		m_eventHandler.getM_studentScoreHashtable().clear();
+		m_eventHandler.getM_IPStudentListHashtable().clear();
+		
+		BufferedReader attendReader = new BufferedReader(new InputStreamReader(fis));
+		
+		try {
+			String strStudentID = attendReader.readLine();
+			while(strStudentID != null) {
+				strStudentID = strStudentID.trim();
+				System.out.println("ID: "+strStudentID);
+				m_eventHandler.getM_studentScoreHashtable().put(strStudentID, 0);
+				strStudentID = attendReader.readLine();
+			}
+			printMessage("init attendance book of CDS 2020-1\n");
+			printMessage("Total #: "+m_eventHandler.getM_studentScoreHashtable().size()+"\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			attendReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		m_eventHandler.setM_strExamCode("cds-2020-1");
+	}
+	
+	public void initDSFinalExam2020_1()
+	{
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream("attendance-book-ds-2020-1.txt");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+		
+		m_eventHandler.setM_nCount(0);
+		m_eventHandler.setM_nScore(0);
+		m_eventHandler.getM_studentScoreHashtable().clear();
+		m_eventHandler.getM_IPStudentListHashtable().clear();
+		
+		BufferedReader attendReader = new BufferedReader(new InputStreamReader(fis));
+		
+		try {
+			String strStudentID = attendReader.readLine();
+			while(strStudentID != null) {
+				strStudentID = strStudentID.trim();
+				System.out.println("ID: "+strStudentID);
+				m_eventHandler.getM_studentScoreHashtable().put(strStudentID, 0);
+				strStudentID = attendReader.readLine();
+			}
+			printMessage("init attendance book of DS 2020-1\n");
+			printMessage("Total #: "+m_eventHandler.getM_studentScoreHashtable().size()+"\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			attendReader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		m_eventHandler.setM_strExamCode("ds-2020-1");
 	}
 
 	public void printMessage(String strText)

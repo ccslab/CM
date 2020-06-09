@@ -1,8 +1,11 @@
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Vector;
 import java.io.*;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SocketChannel;
 
+import kr.ac.konkuk.ccslab.cm.entity.CMUser;
 import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMEvent;
 import kr.ac.konkuk.ccslab.cm.event.CMFileEvent;
@@ -43,6 +46,13 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 	private int m_nTotalNumFilesPerSession;
 	private int m_nCurNumFilesPerSession;
 	
+	// information for cds/ds exam
+	private String m_strExamCode;
+	private int m_nScore;
+	private int m_nCount;
+	private Hashtable<String,Integer> m_studentScoreHashtable;
+	private Hashtable<String,Vector<String>> m_IPStudentListHashtable;
+	
 	public CMWinServerEventHandler(CMServerStub serverStub, CMWinServer server)
 	{
 		m_server = server;
@@ -55,6 +65,12 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		m_strFileReceiver = null;
 		m_nTotalNumFilesPerSession = 0;
 		m_nCurNumFilesPerSession = 0;
+		
+		m_strExamCode = null;
+		m_nScore = 0;
+		m_nCount = 0;
+		m_studentScoreHashtable = new Hashtable<String, Integer>();
+		m_IPStudentListHashtable = new Hashtable<String,Vector<String>>();		
 	}
 	
 	@Override
@@ -138,7 +154,7 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 			printMessage("["+se.getUserName()+"] requests to join session("+se.getSessionName()+").\n");
 			break;
 		case CMSessionEvent.LEAVE_SESSION:
-			//System.out.println("["+se.getUserName()+"] leaves a session("+se.getSessionName()+").");
+			//System.out.println("["+se.getUserName()+"] leaves a session("+se.getSessionName)()+").");
 			printMessage("["+se.getUserName()+"] leaves a session("+se.getSessionName()+").\n");
 			break;
 		case CMSessionEvent.ADD_NONBLOCK_SOCKET_CHANNEL:
@@ -207,7 +223,147 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		printMessage("session("+due.getHandlerSession()+"), group("+due.getHandlerGroup()+")\n");
 		//System.out.println("dummy msg: "+due.getDummyInfo());
 		printMessage("["+due.getSender()+"] sent a dummy msg: "+due.getDummyInfo()+"\n");
+		String strClient = due.getSender();
+		CMUser client = m_serverStub.getCMInfo().getInteractionInfo().getLoginUsers().findMember(strClient);
+		SocketChannel sc = (SocketChannel) client.getNonBlockSocketChannelInfo().findChannel(0);
+		String strClientIP = sc.socket().getInetAddress().getHostAddress();
+		
+		String strDummyInfo = due.getDummyInfo();
+		
+		printLog("["+due.getSender()+"]["+strClientIP+"] sent a dummy msg: "+strDummyInfo+
+				"\n", true);
+
+		CMDummyEvent replyEvent = new CMDummyEvent();
+		String strReplyMessage = null;
+		
+		switch(strDummyInfo) {
+		case "score":
+			int score;
+			// check if the client is valid
+			if(m_studentScoreHashtable.get(strClient)== null) {
+				
+				strReplyMessage = "wrong student ID: "+strClient;
+			}
+			else if( !m_strExamCode.contentEquals("cds-2020-1") ) {
+				strReplyMessage = "wrong request field: "+strDummyInfo;
+			}
+			else if( (score = m_studentScoreHashtable.get(strClient)) > 0 ) {
+				strReplyMessage = "["+strClient+"] The score is already recorded : "+score;
+			}
+			else {
+				// calculate score
+				m_nCount++;
+				calculateScore();
+				
+				// check the same IP
+				Vector<String> sameIPStudentList = m_IPStudentListHashtable.get(strClientIP);
+				if(sameIPStudentList != null) {
+					strReplyMessage = "["+strClient+"] WARNING: Your IP ("+strClientIP
+							+") already used by "+sameIPStudentList.size()+" students ["
+							+sameIPStudentList.get(0)+"]!\n"
+							+"Your score is : "+m_nScore;
+					
+					m_studentScoreHashtable.put(strClient, m_nScore);
+					sameIPStudentList.add(strClient);
+										
+					StringBuffer sameIPDetected = new StringBuffer(); 
+					sameIPDetected.append("same IP detected ["+strClientIP+"] : ");
+					for(String studentID : sameIPStudentList) {
+						sameIPDetected.append(studentID+" ");
+					}
+					printLog(sameIPDetected.toString()+"\n", true);
+				}
+				else {
+					strReplyMessage = "["+strClient+"] Your score is : "+m_nScore;
+					
+					m_studentScoreHashtable.put(strClient, m_nScore);
+					Vector<String> IPStudentList = new Vector<String>();
+					IPStudentList.add(strClient);
+					m_IPStudentListHashtable.put(strClientIP, IPStudentList);					
+				}
+				
+			}
+			break;
+		case "clock":
+			int clock;
+			// check if the client is valid
+			if(m_studentScoreHashtable.get(strClient)== null) {
+				
+				strReplyMessage = "wrong student ID: "+strClient;
+			}
+			else if( !m_strExamCode.contentEquals("ds-2020-1") ) {
+				strReplyMessage = "wrong request field: "+strDummyInfo;
+			}
+			else if( (clock = m_studentScoreHashtable.get(strClient)) > 0 ) {
+				strReplyMessage = "["+strClient+"] Your clock is already recorded : "+clock;
+			}
+			else {
+				// calculate score
+				m_nCount++;
+				//calculateScore();
+				
+				// check the same IP
+				Vector<String> sameIPStudentList = m_IPStudentListHashtable.get(strClientIP);
+				if(sameIPStudentList != null) {
+					strReplyMessage = "["+strClient+"] WARNING: Your IP ("+strClientIP
+							+") already used by "+sameIPStudentList.size()+" students ["
+							+sameIPStudentList.get(0)+"]!\n"
+							+"Your clock is : "+m_nCount;
+					
+					m_studentScoreHashtable.put(strClient, m_nCount);
+					sameIPStudentList.add(strClient);
+					
+					StringBuffer sameIPDetected = new StringBuffer(); 
+					sameIPDetected.append("same IP detected ["+strClientIP+"] : ");
+					for(String studentID : sameIPStudentList) {
+						sameIPDetected.append(studentID+" ");
+					}
+					printLog(sameIPDetected.toString()+"\n", true);
+				}
+				else {
+					strReplyMessage = "["+strClient+"] Your clock is : "+m_nCount;
+					
+					m_studentScoreHashtable.put(strClient, m_nCount);
+					Vector<String> IPStudentList = new Vector<String>();
+					IPStudentList.add(strClient);
+					m_IPStudentListHashtable.put(strClientIP, IPStudentList);					
+				}
+				
+			}
+			break;
+		}
+		
+		printLog(strReplyMessage+"\n", true);
+		replyEvent.setDummyInfo(strReplyMessage);
+		m_serverStub.send(replyEvent, strClient);
 		return;
+	}
+	
+	private int calculateScore() {
+		
+		int nStudentNum = m_studentScoreHashtable.size();
+		float fRatio = (float)m_nCount / nStudentNum;
+		
+		if(fRatio <= 0.2) {
+			return m_nScore;
+		}
+		else if(fRatio <= 0.4) {
+			m_nScore--;
+			return m_nScore;
+		}
+		else if(fRatio <= 0.6) {
+			m_nScore--;
+			return m_nScore;
+		}
+		else if(fRatio <= 0.8) {
+			m_nScore--;
+			return m_nScore;
+		}
+		else {
+			m_nScore--;
+			return m_nScore;
+		}
+		
 	}
 	
 	private void processUserEvent(CMEvent cme)
@@ -817,6 +973,50 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 	{
 		m_server.printLog(strText, bFile);
 	}
+
+	/////////////////////////////////////////////////////////
+	// setter/getter
+		
+	public String getM_strExamCode() {
+		return m_strExamCode;
+	}
+
+	public void setM_strExamCode(String m_strExamCode) {
+		this.m_strExamCode = m_strExamCode;
+	}
+	
+	public int getM_nScore() {
+		return m_nScore;
+	}
+
+	public void setM_nScore(int m_nScore) {
+		this.m_nScore = m_nScore;
+	}
+
+	public Hashtable<String, Integer> getM_studentScoreHashtable() {
+		return m_studentScoreHashtable;
+	}
+
+	public void setM_studentScoreHashtable(Hashtable<String, Integer> m_studentScoreHashtable) {
+		this.m_studentScoreHashtable = m_studentScoreHashtable;
+	}
+
+	public Hashtable<String, Vector<String>> getM_IPStudentListHashtable() {
+		return m_IPStudentListHashtable;
+	}
+
+	public void setM_IPStudentListHashtable(Hashtable<String, Vector<String>> m_IPStudentListHashtable) {
+		this.m_IPStudentListHashtable = m_IPStudentListHashtable;
+	}
+
+	public int getM_nCount() {
+		return m_nCount;
+	}
+
+	public void setM_nCount(int m_nCount) {
+		this.m_nCount = m_nCount;
+	}
+	
 	
 	/*
 	private void setMessage(String strText)
@@ -825,5 +1025,7 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		m_outTextArea.setCaretPosition(m_outTextArea.getDocument().getLength());
 	}
 	*/
+	
+	
 
 }
