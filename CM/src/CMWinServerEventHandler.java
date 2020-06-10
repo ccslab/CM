@@ -248,7 +248,7 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 				strReplyMessage = "wrong request field: "+strDummyInfo;
 			}
 			else if( (score = m_studentScoreHashtable.get(strClient)) > 0 ) {
-				strReplyMessage = "["+strClient+"] The score is already recorded : "+score;
+				strReplyMessage = "["+strClient+"] Your score is already recorded : "+score;
 			}
 			else {
 				// calculate score
@@ -332,10 +332,13 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 			}
 			break;
 		}
+
+		if(strReplyMessage != null) {
+			printLog(strReplyMessage+"\n", true);
+			replyEvent.setDummyInfo(strReplyMessage);
+			m_serverStub.send(replyEvent, strClient);			
+		}
 		
-		printLog(strReplyMessage+"\n", true);
-		replyEvent.setDummyInfo(strReplyMessage);
-		m_serverStub.send(replyEvent, strClient);
 		return;
 	}
 	
@@ -345,22 +348,23 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		float fRatio = (float)m_nCount / nStudentNum;
 		
 		if(fRatio <= 0.2) {
+			m_nScore = CMWinServer.INIT_SCORE;
 			return m_nScore;
 		}
 		else if(fRatio <= 0.4) {
-			m_nScore--;
+			m_nScore = CMWinServer.INIT_SCORE - 1;
 			return m_nScore;
 		}
 		else if(fRatio <= 0.6) {
-			m_nScore--;
+			m_nScore = CMWinServer.INIT_SCORE - 2;
 			return m_nScore;
 		}
 		else if(fRatio <= 0.8) {
-			m_nScore--;
+			m_nScore = CMWinServer.INIT_SCORE - 3;
 			return m_nScore;
 		}
 		else {
-			m_nScore--;
+			m_nScore = CMWinServer.INIT_SCORE - 4;
 			return m_nScore;
 		}
 		

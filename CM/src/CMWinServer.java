@@ -44,6 +44,7 @@ import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 public class CMWinServer extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	public static final int INIT_SCORE = 10;
 	
 	//private JTextArea m_outTextArea;
 	private JTextPane m_outTextPane;
@@ -1869,7 +1870,7 @@ public class CMWinServer extends JFrame {
 		}
 		
 		m_eventHandler.setM_nCount(0);
-		m_eventHandler.setM_nScore(10);
+		m_eventHandler.setM_nScore(INIT_SCORE);
 		m_eventHandler.getM_studentScoreHashtable().clear();
 		m_eventHandler.getM_IPStudentListHashtable().clear();
 		
