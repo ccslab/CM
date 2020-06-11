@@ -44,7 +44,7 @@ import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 public class CMWinServer extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	public static final int INIT_SCORE = 10;
+	public static final int INIT_SCORE = 5;
 	
 	//private JTextArea m_outTextArea;
 	private JTextPane m_outTextPane;

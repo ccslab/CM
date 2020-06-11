@@ -347,24 +347,16 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		int nStudentNum = m_studentScoreHashtable.size();
 		float fRatio = (float)m_nCount / nStudentNum;
 		
-		if(fRatio <= 0.2) {
+		if(fRatio <= 0.3) {
 			m_nScore = CMWinServer.INIT_SCORE;
 			return m_nScore;
 		}
-		else if(fRatio <= 0.4) {
+		else if(fRatio <= 0.6) {
 			m_nScore = CMWinServer.INIT_SCORE - 1;
 			return m_nScore;
 		}
-		else if(fRatio <= 0.6) {
-			m_nScore = CMWinServer.INIT_SCORE - 2;
-			return m_nScore;
-		}
-		else if(fRatio <= 0.8) {
-			m_nScore = CMWinServer.INIT_SCORE - 3;
-			return m_nScore;
-		}
 		else {
-			m_nScore = CMWinServer.INIT_SCORE - 4;
+			m_nScore = CMWinServer.INIT_SCORE - 2;
 			return m_nScore;
 		}
 		
