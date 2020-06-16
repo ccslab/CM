@@ -1,6 +1,15 @@
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,11 +22,36 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 import kr.ac.konkuk.ccslab.cm.entity.CMGroup;
 import kr.ac.konkuk.ccslab.cm.entity.CMGroupInfo;
@@ -3785,17 +3819,22 @@ public class CMWinClient extends JFrame {
 		printMessage("========== MQTT publish\n");
 		JTextField topicTextField = new JTextField();
 		JTextField messageTextField = new JTextField();
-		String[] qosArray = {"0", "1", "2"};
+		String[] qosArray = {"0", "1", "2", "3"}; //::::::::::::::::::::::::::
 		JComboBox<String> qosComboBox = new JComboBox<String>(qosArray);
 		JCheckBox dupFlagBox = new JCheckBox();
 		JCheckBox retainFlagBox = new JCheckBox();
+		JTextField strReceiverField = new JTextField();
+		JTextField nMinNumWaitedEventsField = new JTextField();
 		Object[] msg = {
 				"topic", topicTextField,
 				"message", messageTextField,
 				"QoS", qosComboBox,
 				"dup flag", dupFlagBox,
-				"retain flag", retainFlagBox
+				"retain flag", retainFlagBox,
+				"strReceiver", strReceiverField,
+				"nMinNumWaitedEvents", nMinNumWaitedEventsField
 		};
+		
 		int nRet = JOptionPane.showConfirmDialog(null, msg, "MQTT publish", 
 				JOptionPane.OK_CANCEL_OPTION);
 		if(nRet != JOptionPane.OK_OPTION) return;
@@ -3805,6 +3844,9 @@ public class CMWinClient extends JFrame {
 		byte qos = (byte) qosComboBox.getSelectedIndex();
 		boolean bDupFlag = dupFlagBox.isSelected();
 		boolean bRetainFlag = retainFlagBox.isSelected();
+		String strReceiver = strReceiverField.getText().trim();
+		String strMinNumWaitedEvents = nMinNumWaitedEventsField.getText().trim();
+		int nMinNumWaitedEvents = Integer.parseInt(strMinNumWaitedEvents);
 		
 		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
 		if(mqttManager == null)
@@ -3813,14 +3855,18 @@ public class CMWinClient extends JFrame {
 			return;
 		}
 		//mqttManager.publish(1, "/CM/test", "This is a test message.", (byte)1);
-		mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+		if(qos==3) {
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+		}else {
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+		}
 	}
 	
 	public void testMqttSubscribe()
 	{
 		printMessage("========== MQTT subscribe\n");
 		JTextField topicFilterTextField = new JTextField();
-		String[] qosArray = {"0", "1", "2"};
+		String[] qosArray = {"0", "1", "2", "3"}; //::::::::::::::::::
 		JComboBox<String> qosComboBox = new JComboBox<String>(qosArray);
 		Object[] msg = {
 				"topic filter", topicFilterTextField,

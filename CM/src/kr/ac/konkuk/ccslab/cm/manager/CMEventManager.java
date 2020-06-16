@@ -1,9 +1,11 @@
 package kr.ac.konkuk.ccslab.cm.manager;
 
 import java.net.InetSocketAddress;
-import java.nio.*;
-import java.nio.channels.*;
-import java.util.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectableChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
 
 import kr.ac.konkuk.ccslab.cm.entity.CMChannelInfo;
 import kr.ac.konkuk.ccslab.cm.entity.CMGroup;
@@ -31,6 +33,7 @@ import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventDISCONNECT;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPINGREQ;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPINGRESP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBACK;
+import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCHK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCOMP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBLISH;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBREC;
@@ -151,6 +154,9 @@ public class CMEventManager {
 			case CMMqttEvent.DISCONNECT:
 				CMMqttEventDISCONNECT disconEvent = new CMMqttEventDISCONNECT(buf);
 				return disconEvent;
+			case CMMqttEvent.PUBCHK: //::::::::::::::::::::::::::::::::::
+				CMMqttEventPUBCHK pubchkEvent = new CMMqttEventPUBCHK(buf);
+				return pubchkEvent;
 			default:
 				System.err.println("CMEventManager.unmarshallEvent(), unknown MQTT event ID: "+nEventID);
 				return null;

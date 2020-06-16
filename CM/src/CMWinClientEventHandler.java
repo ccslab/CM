@@ -1,10 +1,12 @@
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JOptionPane;
-
-import java.io.*;
-import java.awt.*;
 
 import kr.ac.konkuk.ccslab.cm.entity.CMServerInfo;
 import kr.ac.konkuk.ccslab.cm.entity.CMSessionInfo;
@@ -22,6 +24,7 @@ import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEvent;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventCONNACK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBACK;
+import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCHK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCOMP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBLISH;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBREC;
@@ -1421,6 +1424,12 @@ public class CMWinClientEventHandler implements CMAppEventHandler{
 			CMMqttEventUNSUBACK unsubackEvent = (CMMqttEventUNSUBACK)cme;
 			//printMessage("received "+unsubackEvent+"\n");
 			printMessage("["+unsubackEvent.getSender()+"] sent CMMqttEvent.UNSUBACK\n");
+			break;
+		case CMMqttEvent.PUBCHK: //::::::::::::::::
+			CMMqttEventPUBCHK pubchkEvent = (CMMqttEventPUBCHK)cme;
+			//printMessage("received "+pubchkEvent+"\n");
+			printMessage("["+pubchkEvent.getSender()+"] sent CMMqttEvent.PUBCHK, "
+					+ "[packet ID: "+pubchkEvent.getPacketID()+"]\n");
 			break;
 		}
 		

@@ -29,6 +29,12 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	String m_strAppMessage;
 	
 	//////////////////////////////////////////////////
+	// member variables (variable header) - for QoS 3
+	String m_strReceiver;
+	int m_nMinNumWaitedEvents;
+	boolean m_isBlocked;
+	
+	//////////////////////////////////////////////////
 	// constructors
 
 	/**
@@ -50,6 +56,9 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		m_nPacketID = 0;
 		// initialize payload
 		m_strAppMessage = "";
+		
+		m_strReceiver = "";
+		m_nMinNumWaitedEvents = 0;
 	}
 	
 	public CMMqttEventPUBLISH(ByteBuffer msg)
@@ -215,7 +224,36 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 		return m_nPacketID;
 	}
-		
+	
+	//::::::::::::::::::::
+	public String getM_strReceiver() {
+		return m_strReceiver;
+	}
+
+//	public void setM_strReceiver(List<String> strReceiver) {
+//		this.m_strReceiver = strReceiver;
+//	}
+	
+	public void setM_strReceiver(String strReceiver) {
+		this.m_strReceiver = strReceiver;
+	}
+
+	public int getM_nMinNumWaitedEvents() {
+		return m_nMinNumWaitedEvents;
+	}
+
+	public void setM_nMinNumWaitedEvents(int m_nMinNumWaitedEvents) {
+		this.m_nMinNumWaitedEvents = m_nMinNumWaitedEvents;
+	}
+	
+	public boolean isM_isBlocked() {
+		return m_isBlocked;
+	}
+
+	public void setM_isBlocked(boolean m_isBlocked) {
+		this.m_isBlocked = m_isBlocked;
+	}
+	
 	//////////////////////////////////////////////////
 	// overridden methods (variable header)
 	
