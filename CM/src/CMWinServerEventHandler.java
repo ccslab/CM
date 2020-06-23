@@ -512,6 +512,14 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 		{
 			processUserEvent_start_csc_ftp_session(ue);
 		}
+		else if(ue.getStringID().contentEquals("cds_user_event"))
+		{
+			CMUserEvent rue = new CMUserEvent();
+			rue.setID(123);
+			rue.setEventField(CMInfo.CM_INT, "return_code", "1");
+			rue.setEventField(CMInfo.CM_STR, "return_msg", "cds3205");
+			m_serverStub.send(rue, ue.getSender());
+		}
 		else
 		{
 			printMessage("CMUserEvent received from ["+ue.getSender()+"], strID("+ue.getStringID()+")\n");
