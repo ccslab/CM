@@ -1,6 +1,5 @@
 package kr.ac.konkuk.ccslab.cm.manager;
 
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
@@ -561,6 +560,8 @@ public class CMMqttManager extends CMServiceManager {
 			return null;
 		}
 		eventSync.setMinNumWaitedEvents(nMinNumWaitedEvents);
+		eventSync.setWaitedReceiver(strReceiver);
+		
 		// send PUBLISH event
 		bRet = CMEventManager.unicastEvent(pubEvent,strReceiverServer, m_cmInfo);
 //		bRet = CMEventManager.unicastEvent(pubEvent, strReceiverServer, CMInfo.CM_STREAM, 0, 0, false, m_cmInfo);
@@ -595,7 +596,7 @@ public class CMMqttManager extends CMServiceManager {
 		}
 		
 		System.out.println(":::::::::: end of the syncpub client");
-//		return bRet;
+		
 		return eventArray;
 	}
 	
@@ -606,23 +607,22 @@ public class CMMqttManager extends CMServiceManager {
 		// find subscribers and send the PUBLISH event
 		CMMqttInfo mqttInfo = m_cmInfo.getMqttInfo();
 		Hashtable<String, CMMqttSession> sessionHashtable = mqttInfo.getMqttSessionHashtable();
-		Set<String> keys = null;
-//		for(int i=0;i<strReceiver.length;i++) {
-//			System.out.println("::::::strReceiver::"+strReceiver[i]);
-//		}
+		Set<String> keys;
 		
 		if(strReceiver==null || strReceiver.equals("")) {
 			keys = sessionHashtable.keySet();
 		}else {
-			String[] strReceiverArray=strReceiver.split(",");
-			keys.addAll(Arrays.asList(strReceiverArray));
+			Hashtable<String, String> receiverList=new Hashtable<String, String>();
+			String[] strReceiverArray = strReceiver.split(",");
+			for(int i=0;i<strReceiverArray.length;i++) {
+				receiverList.put(strReceiverArray[i], "");
+			}
+			keys = receiverList.keySet();
 		}
-		
-		System.out.println(":::::::keys::"+keys.toString());
 		
 		for (String key : keys) 
 		{
-			CMMqttSession session = sessionHashtable.get(key);//::::::::이부분때문에 특정사용자에게만이 아니라 전체에게 메시지가 감 손봐야함
+			CMMqttSession session = sessionHashtable.get(key);
 			if (session == null) 
 			{
 				System.err.println("CMMqttManager.syncpubFromServer(), session of client (" + key + ") is null!");

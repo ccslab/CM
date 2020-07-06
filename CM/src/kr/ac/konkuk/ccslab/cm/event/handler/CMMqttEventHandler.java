@@ -620,7 +620,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// server -> pub
 		// set sender (in CM event header)
 		CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
-		pubchkEvent.setSender(myself.getName());
+//		pubchkEvent.setSender(myself.getName());
 
 		// send ack to the PUBLISH sender
 		boolean bRet = false;
@@ -1143,7 +1143,22 @@ public class CMMqttEventHandler extends CMEventHandler {
 			CMEventSynchronizer eventSync = m_cmInfo.getEventInfo().getEventSynchronizer();
 			if((eventSync.getWaitedEventType()==CMMqttEvent.PUBCHK) 
 					&& (eventSync.getWaitedEventID()==pubchkEvent.getPacketID())){
-				eventSync.addReplyEvent(pubchkEvent);
+//				eventSync.addReplyEvent(pubchkEvent);
+				//if() 리시버 체크
+				if(eventSync.getWaitedReceiver().isEmpty()) {
+					eventSync.addReplyEvent(pubchkEvent);
+				} else {
+//					System.out.println("::::::::"+eventSync.getWaitedReceiver());
+					String[] strRecvArr=eventSync.getWaitedReceiver().split(",");
+//					System.out.println("strrecvarr::::"+strRecvArr[0]);
+//					System.out.println("getSender:::::"+pubchkEvent.getSender());
+					for(int i=0;i<strRecvArr.length;i++) {
+						if(strRecvArr[i].equals(pubchkEvent.getSender())) {
+							eventSync.addReplyEvent(pubchkEvent);
+							break;
+						}
+					}//end for
+				}//end else
 			}
 			System.out.println("::::::::::::::eventSync.getMinNumWaitedEvents()::"+eventSync.getMinNumWaitedEvents());
 			System.out.println("::::::::::::eventSync.getSizeOfReplyEventList()::"+eventSync.getSizeOfReplyEventList());
@@ -1160,6 +1175,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 					}
 				}
 			}
+			
 		} else if (strSysType.equals("SERVER")) {
 			sendPUBCHK(pubchkEvent);
 		}

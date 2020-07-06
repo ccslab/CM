@@ -311,7 +311,9 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	@Override
 	protected int getPayloadByteNum()
 	{
-		int nByteNum = m_strAppMessage.getBytes().length;	// app message
+//		int nByteNum = m_strAppMessage.getBytes().length;	// app message
+		int nByteNum = CMInfo.STRING_LEN_BYTES_LEN + m_strAppMessage.getBytes().length;	// app message
+		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strReceiver.getBytes().length;//::::::::::::::
 		// this byte number does not contain the length of the string 
 		// because the length will be calculated separately.
 		return nByteNum;
@@ -321,17 +323,21 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	protected void marshallPayload()
 	{
 		// The string length will be calculated separately.
-		m_bytes.put(m_strAppMessage.getBytes());
+//		m_bytes.put(m_strAppMessage.getBytes());
+		putStringToByteBuffer(m_strAppMessage);
+		putStringToByteBuffer(m_strReceiver);//추가된 필드:::::::::::::::::::::
 	}
 
 	@Override
 	protected void unmarshallPayload(ByteBuffer buf)
 	{
-		int nAppMsgLength = m_nRemainingLength - getVarHeaderByteNum();
-		// m_nRemainingLength is determined after unmarshallFixedHeader() 
-		byte[] appMsgBytes = new byte[nAppMsgLength];
-		buf.get(appMsgBytes);
-		m_strAppMessage = new String(appMsgBytes);
+//		int nAppMsgLength = m_nRemainingLength - getVarHeaderByteNum();
+//		// m_nRemainingLength is determined after unmarshallFixedHeader() 
+//		byte[] appMsgBytes = new byte[nAppMsgLength];
+//		buf.get(appMsgBytes);
+//		m_strAppMessage = new String(appMsgBytes);
+		m_strAppMessage = getStringFromByteBuffer(buf);
+		m_strReceiver = getStringFromByteBuffer(buf);//::::::::::::::::::::::::
 	}
 
 	//////////////////////////////////////////////////
