@@ -3846,7 +3846,10 @@ public class CMWinClient extends JFrame {
 		boolean bRetainFlag = retainFlagBox.isSelected();
 		String strReceiver = strReceiverField.getText().trim();
 		String strMinNumWaitedEvents = nMinNumWaitedEventsField.getText().trim();
-		int nMinNumWaitedEvents = Integer.parseInt(strMinNumWaitedEvents);
+		int nMinNumWaitedEvents = 0;
+		if(!strMinNumWaitedEvents.isEmpty()) {
+			nMinNumWaitedEvents = Integer.parseInt(strMinNumWaitedEvents);
+		}
 		
 		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
 		if(mqttManager == null)
