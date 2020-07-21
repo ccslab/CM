@@ -337,6 +337,7 @@ public class CMMqttManager extends CMServiceManager {
 		{			
 			// add the sent event to the sent-unack-publish-list
 			bRet = session.addSentUnAckPublish(pubEvent);
+			System.out.println("unackpub:::::::::"+session.getSentUnAckPublishList().toString());
 			if(bRet && CMInfo._CM_DEBUG)
 			{
 				System.out.println("CMMqttManager.publishFromClient(): "
@@ -561,6 +562,20 @@ public class CMMqttManager extends CMServiceManager {
 		}
 		eventSync.setMinNumWaitedEvents(nMinNumWaitedEvents);
 		eventSync.setWaitedReceiver(strReceiver);
+		
+		
+		// add the sent event to the sent-unack-publish-list
+		bRet = session.addSentUnAckPublish(pubEvent);
+		if (bRet && CMInfo._CM_DEBUG) {
+			System.out.println("CMMqttManager.publishFromClient(): " + "stored to sent unack publish list: "
+					+ pubEvent.toString());
+		}
+		if (!bRet) {
+			System.err.println("CMMqttManager.publishFromClient(): " + "error to store to sent unack publish list: "
+					+ pubEvent.toString());
+			return null;
+		}
+		System.out.println("unackpub:::::::::"+session.getSentUnAckPublishList().toString());
 		
 		// send PUBLISH event
 		bRet = CMEventManager.unicastEvent(pubEvent,strReceiverServer, m_cmInfo);
