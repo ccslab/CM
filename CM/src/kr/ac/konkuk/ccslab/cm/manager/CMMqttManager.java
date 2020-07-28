@@ -268,7 +268,7 @@ public class CMMqttManager extends CMServiceManager {
 	}
 	
 	private boolean publishFromClient(String strTopic, String strMsg, 
-			byte qos, boolean bDupFlag, boolean bRetainFlag) //Ŭ���̾�Ʈ�� ������ ��Ŷ ������ �۾�
+			byte qos, boolean bDupFlag, boolean bRetainFlag) //클占쏙옙占싱억옙트占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙킷 占쏙옙占쏙옙占쏙옙 占쌜억옙
 	{
 		// client -> server
 		boolean bRet = false;
@@ -333,7 +333,7 @@ public class CMMqttManager extends CMServiceManager {
 		}
 		
 		// process QoS 1 or 2 case for the sent packet
-		if( qos == 1 || qos == 2 ) //������
+		if( qos == 1 || qos == 2 ) //占쏙옙占쏙옙占쏙옙
 		{			
 			// add the sent event to the sent-unack-publish-list
 			bRet = session.addSentUnAckPublish(pubEvent);
@@ -548,7 +548,7 @@ public class CMMqttManager extends CMServiceManager {
 		// set nMinNumWaitedEvents
 		pubEvent.setM_nMinNumWaitedEvents(nMinNumWaitedEvents);
 				
-		System.out.println(":::::::;pubEvent string "+pubEvent.getM_strReceiver());		
+		System.out.println("::::::::pubEvent string "+pubEvent.getM_strReceiver());		
 		//set event synchronizer
 		String strReceiverServer = m_cmInfo.getInteractionInfo().getDefaultServerInfo()
 				.getServerName();
@@ -575,11 +575,10 @@ public class CMMqttManager extends CMServiceManager {
 					+ pubEvent.toString());
 			return null;
 		}
-		System.out.println("unackpub:::::::::"+session.getSentUnAckPublishList().toString());
+		System.out.println(":::::::::::unackpub:::: "+session.getSentUnAckPublishList().toString());
 		
 		// send PUBLISH event
 		bRet = CMEventManager.unicastEvent(pubEvent,strReceiverServer, m_cmInfo);
-//		bRet = CMEventManager.unicastEvent(pubEvent, strReceiverServer, CMInfo.CM_STREAM, 0, 0, false, m_cmInfo);
 		synchronized(eventSync)
 		{
 			try {
@@ -644,7 +643,7 @@ public class CMMqttManager extends CMServiceManager {
 				continue;
 			}
 			syncpublishFromServerToOneClient(strTopic, strMsg, (byte)3, bDupFlag, bRetainFlag, key, session, sender, nID);
-			//저 함수 차후에 리스트 지정멤버 가능하게 수정
+			//�� �븿�닔 李⑦썑�뿉 由ъ뒪�듃 吏��젙硫ㅻ쾭 媛��뒫�븯寃� �닔�젙
 		}
 		
 		return true;
@@ -1196,8 +1195,8 @@ public class CMMqttManager extends CMServiceManager {
 	}
 	
 //	public boolean pubchkFromServer() {
-//		//event synchronizer - ���
-//		//���� �� �״�� �ϸ� ����
+//		//event synchronizer - 占쏙옙占�
+//		//占쏙옙占쏙옙 占쏙옙 占쌓댐옙占� 占싹몌옙 占쏙옙占쏙옙
 //		return false;
 //	}
 	

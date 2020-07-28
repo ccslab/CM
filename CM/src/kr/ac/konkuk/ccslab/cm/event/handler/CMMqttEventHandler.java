@@ -1143,15 +1143,10 @@ public class CMMqttEventHandler extends CMEventHandler {
 			CMEventSynchronizer eventSync = m_cmInfo.getEventInfo().getEventSynchronizer();
 			if((eventSync.getWaitedEventType()==CMMqttEvent.PUBCHK) 
 					&& (eventSync.getWaitedEventID()==pubchkEvent.getPacketID())){
-//				eventSync.addReplyEvent(pubchkEvent);
-				//if() 리시버 체크
 				if(eventSync.getWaitedReceiver().isEmpty()) {
 					eventSync.addReplyEvent(pubchkEvent);
 				} else {
-//					System.out.println("::::::::"+eventSync.getWaitedReceiver());
 					String[] strRecvArr=eventSync.getWaitedReceiver().split(",");
-//					System.out.println("strrecvarr::::"+strRecvArr[0]);
-//					System.out.println("getSender:::::"+pubchkEvent.getSender());
 					for(int i=0;i<strRecvArr.length;i++) {
 						if(strRecvArr[i].equals(pubchkEvent.getSender())) {
 							eventSync.addReplyEvent(pubchkEvent);
@@ -1163,6 +1158,10 @@ public class CMMqttEventHandler extends CMEventHandler {
 			System.out.println("::::::::::::::eventSync.getMinNumWaitedEvents()::"+eventSync.getMinNumWaitedEvents());
 			System.out.println("::::::::::::eventSync.getSizeOfReplyEventList()::"+eventSync.getSizeOfReplyEventList());
 			if(eventSync.getMinNumWaitedEvents()<=eventSync.getSizeOfReplyEventList()) {
+				//remove publish from the sent-unack-publish list
+				session.removeSentUnAckPublish(pubchkEvent.getPacketID());
+				System.out.println(":::::::::::unackpub:::: "+session.getSentUnAckPublishList().toString());
+				//notify
 				synchronized(eventSync)
 				{
 					try {
