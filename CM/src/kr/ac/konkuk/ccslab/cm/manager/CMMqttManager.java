@@ -268,7 +268,7 @@ public class CMMqttManager extends CMServiceManager {
 	}
 	
 	private boolean publishFromClient(String strTopic, String strMsg, 
-			byte qos, boolean bDupFlag, boolean bRetainFlag) //클占쏙옙占싱억옙트占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙킷 占쏙옙占쏙옙占쏙옙 占쌜억옙
+			byte qos, boolean bDupFlag, boolean bRetainFlag) 
 	{
 		// client -> server
 		boolean bRet = false;
@@ -533,7 +533,6 @@ public class CMMqttManager extends CMServiceManager {
 		CMMqttEventPUBLISH pubEvent = new CMMqttEventPUBLISH();
 		// set sender (in CM event header)
 		pubEvent.setSender(myself.getName());
-		pubEvent.setReceiver(myself.getName());
 		// set fixed header
 		pubEvent.setDupFlag(bDupFlag);
 		pubEvent.setQoS((byte)3);
@@ -553,7 +552,7 @@ public class CMMqttManager extends CMServiceManager {
 		String strReceiverServer = m_cmInfo.getInteractionInfo().getDefaultServerInfo()
 				.getServerName();
 		eventSync.init();
-		eventSync.setWaitedEvent(CMMqttEvent.PUBCHK, pubEvent.getPacketID(), strReceiverServer);
+		eventSync.setWaitedEvent(CMMqttEvent.PUBREC, pubEvent.getPacketID(), strReceiverServer);
 		
 		if(nMinNumWaitedEvents < 1)
 		{
@@ -643,7 +642,6 @@ public class CMMqttManager extends CMServiceManager {
 				continue;
 			}
 			syncpublishFromServerToOneClient(strTopic, strMsg, (byte)3, bDupFlag, bRetainFlag, key, session, sender, nID);
-			//�� �븿�닔 李⑦썑�뿉 由ъ뒪�듃 吏��젙硫ㅻ쾭 媛��뒫�븯寃� �닔�젙
 		}
 		
 		return true;
@@ -696,8 +694,7 @@ public class CMMqttManager extends CMServiceManager {
 			CMMqttEventPUBLISH pubEvent = new CMMqttEventPUBLISH();
 			// set sender (in CM event header)
 			CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
-			pubEvent.setSender(myself.getName());
-			pubEvent.setReceiver(sender);
+			pubEvent.setSender(sender);
 			// set fixed header
 			pubEvent.setDupFlag(bDupFlag);
 			pubEvent.setQoS((byte)sentQoS);
@@ -1187,18 +1184,6 @@ public class CMMqttManager extends CMServiceManager {
 
 		return bRet;
 	}
-	
-	//:::::::::::::::::::::::::::::::
-	public boolean pubchkFromClient() {
-		//send pubchk to publisher
-		return false;
-	}
-	
-//	public boolean pubchkFromServer() {
-//		//event synchronizer - 占쏙옙占�
-//		//占쏙옙占쏙옙 占쏙옙 占쌓댐옙占� 占싹몌옙 占쏙옙占쏙옙
-//		return false;
-//	}
 	
 	/**
 	 * Returns the string that contains session information of a CM client.

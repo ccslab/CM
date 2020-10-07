@@ -24,7 +24,6 @@ import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEvent;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventCONNACK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBACK;
-import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCHK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCOMP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBLISH;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBREC;
@@ -1424,12 +1423,6 @@ public class CMWinClientEventHandler implements CMAppEventHandler{
 			CMMqttEventUNSUBACK unsubackEvent = (CMMqttEventUNSUBACK)cme;
 			//printMessage("received "+unsubackEvent+"\n");
 			printMessage("["+unsubackEvent.getSender()+"] sent CMMqttEvent.UNSUBACK\n");
-			break;
-		case CMMqttEvent.PUBCHK: //::::::::::::::::
-			CMMqttEventPUBCHK pubchkEvent = (CMMqttEventPUBCHK)cme;
-			//printMessage("received "+pubchkEvent+"\n");
-			printMessage("["+pubchkEvent.getSender()+"] sent CMMqttEvent.PUBCHK, "
-					+ "[packet ID: "+pubchkEvent.getPacketID()+"]\n");
 			break;
 		}
 		

@@ -14,6 +14,7 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 	//////////////////////////////////////////////////
 	// member variables (variable header)
 	int m_nPacketID;
+	byte m_qos;	
 
 	//////////////////////////////////////////////////
 	// constructors
@@ -30,6 +31,7 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 		m_flag = 0;
 		// initialize variable header
 		m_nPacketID = 0;
+		m_qos = 0;
 	}
 	
 	public CMMqttEventPUBCOMP(ByteBuffer msg)
@@ -59,26 +61,42 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 	{
 		return m_nPacketID;
 	}
+	
+	
+	public byte getM_qos() {
+		return m_qos;
+	}
 
+	public void setM_qos(byte m_qos) {
+		this.m_qos = m_qos;
+	}
+	
 	//////////////////////////////////////////////////
 	// overridden methods (variable header)
 	
 	@Override
 	protected int getVarHeaderByteNum()
 	{
-		return 2;	// packet ID
+//		return 2;	// packet ID
+		int nByteNum = 0;
+		nByteNum += 1;  // qos
+		nByteNum += 2;	// packet identifier
+
+		return nByteNum;
 	}
 
 	@Override
 	protected void marshallVarHeader()
 	{
 		putInt2BytesToByteBuffer(m_nPacketID);
+		m_bytes.put(m_qos);
 	}
 
 	@Override
 	protected void unmarshallVarHeader(ByteBuffer buf)
 	{
 		m_nPacketID = getInt2BytesFromByteBuffer(buf);
+		m_qos = buf.get();
 	}
 
 	//////////////////////////////////////////////////

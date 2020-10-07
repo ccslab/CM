@@ -84,11 +84,6 @@ public abstract class CMMqttEvent extends CMEvent {
 	 */
 	public static final int DISCONNECT = 14;
 	
-	/**
-	 * Event ID of the CMMqttEventDISCONNECT class.
-	 */
-	public static final int PUBCHK = 15;
-	
 	// abstract methods
 	protected abstract int getFixedHeaderByteNum();
 	protected abstract void marshallFixedHeader();

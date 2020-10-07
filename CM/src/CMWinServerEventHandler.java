@@ -21,7 +21,6 @@ import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEvent;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventCONNECT;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventDISCONNECT;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBACK;
-import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCHK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCOMP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBLISH;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBREC;
@@ -804,12 +803,6 @@ public class CMWinServerEventHandler implements CMAppEventHandler {
 			//printMessage("received "+disconEvent+"\n");
 			printMessage("["+disconEvent.getSender()
 				+"] requests to disconnect MQTT service.\n");
-			break;
-		case CMMqttEvent.PUBCHK: //:::::::::::::::::::::::
-			CMMqttEventPUBCHK pubchkEvent = (CMMqttEventPUBCHK)cme;
-			//printMessage("received "+pubackEvent+"\n");
-			printMessage("["+pubchkEvent.getSender()+"] sent CMMqttEvent.PUBCHK, "
-					+ "[packet ID: "+pubchkEvent.getPacketID()+"]\n");
 			break;
 		}
 		

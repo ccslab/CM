@@ -33,7 +33,6 @@ import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventDISCONNECT;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPINGREQ;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPINGRESP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBACK;
-import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCHK;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBCOMP;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBLISH;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBREC;
@@ -154,9 +153,6 @@ public class CMEventManager {
 			case CMMqttEvent.DISCONNECT:
 				CMMqttEventDISCONNECT disconEvent = new CMMqttEventDISCONNECT(buf);
 				return disconEvent;
-			case CMMqttEvent.PUBCHK: //::::::::::::::::::::::::::::::::::
-				CMMqttEventPUBCHK pubchkEvent = new CMMqttEventPUBCHK(buf);
-				return pubchkEvent;
 			default:
 				System.err.println("CMEventManager.unmarshallEvent(), unknown MQTT event ID: "+nEventID);
 				return null;
