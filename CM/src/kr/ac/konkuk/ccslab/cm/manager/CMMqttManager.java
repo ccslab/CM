@@ -561,6 +561,7 @@ public class CMMqttManager extends CMServiceManager {
 		}
 		eventSync.setMinNumWaitedEvents(nMinNumWaitedEvents);
 		eventSync.setWaitedReceiver(strReceiver);
+		session.setMinNumWaitedEvents(0); //for pubrel
 		
 		
 		// add the sent event to the sent-unack-publish-list

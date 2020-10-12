@@ -36,6 +36,8 @@ public class CMMqttSession {
 	
 	private CMList<CMMqttEventPUBREL> m_sentUnAckPubrelList;
 	
+	private int m_nMinNumWaitedEvents;
+	
 	// currently available packet ID
 	private int m_nNextAssignedPacketID;	// 4 client
 	// used to get an available packet ID of SUBSCRIBE packet 
@@ -145,6 +147,14 @@ public class CMMqttSession {
 
 	public synchronized void setsentUnAckPubrelList(CMList<CMMqttEventPUBREL> m_sentUnAckPubrelList) {
 		this.m_sentUnAckPubrelList = m_sentUnAckPubrelList;
+	}
+	
+	public synchronized int getMinNumWaitedEvents() {
+		return m_nMinNumWaitedEvents;
+	}
+
+	public synchronized void setMinNumWaitedEvents(int m_nMinNumWaitedEvents) {
+		this.m_nMinNumWaitedEvents = m_nMinNumWaitedEvents;
 	}
 
 	// next assigned packet ID
