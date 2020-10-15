@@ -600,7 +600,8 @@ public class CMMqttEventHandler extends CMEventHandler {
 		CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
 		String strReceiver="";
 		recEvent.setSender(myself.getName());
-		recEvent.setReceiver(pubEvent.getSender());
+		recEvent.setMqttSender(myself.getName());
+		recEvent.setMqttReceiver(pubEvent.getMqttSender());
 		strReceiver = m_cmInfo.getInteractionInfo().getDefaultServerInfo().getServerName();
 		// set fixed header in the CMMqttEVentPUBACK constructor
 		// set variable header
@@ -627,7 +628,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// server -> pub
 		// send ack to the PUBLISH sender
 		boolean bRet = false;
-		String strPublisher = recEvent.getReceiver();
+		String strPublisher = recEvent.getMqttReceiver();
 		bRet = CMEventManager.unicastEvent(recEvent, strPublisher, m_cmInfo);
 		if (bRet && CMInfo._CM_DEBUG) 
 		{
@@ -646,7 +647,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// server -> sub
 		// send ack to the PUBLISH sender
 		boolean bRet = false;
-		String strPublisher = relEvent.getReceiver();
+		String strPublisher = relEvent.getMqttReceiver();
 		bRet = CMEventManager.unicastEvent(relEvent, strPublisher, m_cmInfo);
 		if (bRet && CMInfo._CM_DEBUG) 
 		{
@@ -665,7 +666,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// server -> sub
 		// send ack to the PUBLISH sender
 		boolean bRet = false;
-		String strPublisher = compEvent.getReceiver();
+		String strPublisher = compEvent.getMqttReceiver();
 		bRet = CMEventManager.unicastEvent(compEvent, strPublisher, m_cmInfo);
 		if (bRet && CMInfo._CM_DEBUG) 
 		{
@@ -1186,7 +1187,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (strSysType.equals("CLIENT")) {
 			session = mqttInfo.getMqttSession();
 		} else if (strSysType.equals("SERVER")) {
-			session = mqttInfo.getMqttSessionHashtable().get(recEvent.getSender());
+			session = mqttInfo.getMqttSessionHashtable().get(recEvent.getMqttSender());
 		} else {
 			System.err.println("CMMqttEventHandler.processQoS3PUBREC(), wrong system type! (" + strSysType + ")");
 			return false;
@@ -1208,7 +1209,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 				} else {
 					String[] strRecvArr=eventSync.getWaitedReceiver().split(",");
 					for(int i=0;i<strRecvArr.length;i++) {
-						if(strRecvArr[i].equals(recEvent.getSender())) {
+						if(strRecvArr[i].equals(recEvent.getMqttSender())) {
 							eventSync.addReplyEvent(recEvent);
 							break;
 						}
@@ -1244,8 +1245,9 @@ public class CMMqttEventHandler extends CMEventHandler {
 			String strReceiverServer = m_cmInfo.getInteractionInfo().getDefaultServerInfo()
 					.getServerName();
 			// set sender (CM event header)
-			relEvent.setSender(recEvent.getReceiver());
-			relEvent.setReceiver(recEvent.getSender());
+			relEvent.setSender(myself.getName());
+			relEvent.setMqttSender(recEvent.getMqttReceiver());
+			relEvent.setMqttReceiver(recEvent.getMqttSender());
 			// set fixed header in the CMMqttEventPUBREL constructor
 			// set variable header
 			relEvent.setPacketID(nPacketID);
@@ -1303,7 +1305,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (strSysType.equals("CLIENT")) {
 			session = mqttInfo.getMqttSession();
 		} else if (strSysType.equals("SERVER")) {
-			session = mqttInfo.getMqttSessionHashtable().get(relEvent.getSender());
+			session = mqttInfo.getMqttSessionHashtable().get(relEvent.getMqttSender());
 		} else {
 			System.err.println("CMMqttEventHandler.processQoS3PUBREL(), wrong system type! (" + strSysType + ")");
 			return false;
@@ -1335,7 +1337,8 @@ public class CMMqttEventHandler extends CMEventHandler {
 			CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
 			// set sender (in CM event header)
 			compEvent.setSender(myself.getName());
-			compEvent.setReceiver(relEvent.getSender());
+			compEvent.setMqttSender(myself.getName());
+			compEvent.setMqttReceiver(relEvent.getMqttSender());
 			// set fixed header in the CMMqttEventPUBCOMP constructor
 			// set variable header
 			compEvent.setPacketID(nPacketID);
@@ -1374,7 +1377,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (strSysType.equals("CLIENT")) {
 			session = mqttInfo.getMqttSession();
 		} else if (strSysType.equals("SERVER")) {
-			session = mqttInfo.getMqttSessionHashtable().get(compEvent.getSender());
+			session = mqttInfo.getMqttSessionHashtable().get(compEvent.getMqttSender());
 		} else {
 			System.err.println("CMMqttEventHandler.processQoS3PUBCOMP(), wrong system type! (" + strSysType + ")");
 			return false;

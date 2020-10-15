@@ -533,6 +533,7 @@ public class CMMqttManager extends CMServiceManager {
 		CMMqttEventPUBLISH pubEvent = new CMMqttEventPUBLISH();
 		// set sender (in CM event header)
 		pubEvent.setSender(myself.getName());
+		pubEvent.setSender(myself.getName());
 		// set fixed header
 		pubEvent.setDupFlag(bDupFlag);
 		pubEvent.setQoS((byte)3);
@@ -695,7 +696,8 @@ public class CMMqttManager extends CMServiceManager {
 			CMMqttEventPUBLISH pubEvent = new CMMqttEventPUBLISH();
 			// set sender (in CM event header)
 			CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
-			pubEvent.setSender(sender);
+			pubEvent.setSender(myself.getName());
+			pubEvent.setMqttSender(sender);
 			// set fixed header
 			pubEvent.setDupFlag(bDupFlag);
 			pubEvent.setQoS((byte)sentQoS);

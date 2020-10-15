@@ -2,6 +2,8 @@ package kr.ac.konkuk.ccslab.cm.event.mqttevent;
 
 import java.nio.ByteBuffer;
 
+import kr.ac.konkuk.ccslab.cm.info.CMInfo;
+
 /**
  * This class represents a CM event that is the variable header and payload of 
  * MQTT PUBREC packet.
@@ -32,6 +34,8 @@ public class CMMqttEventPUBREC extends CMMqttEventFixedHeader {
 		// initialize variable header
 		m_nPacketID = 0;
 		m_qos = 0;
+		m_strMqttReceiver = "";
+		m_strMqttSender = "";
 	}
 	
 	public CMMqttEventPUBREC(ByteBuffer msg)
@@ -80,6 +84,8 @@ public class CMMqttEventPUBREC extends CMMqttEventFixedHeader {
 		int nByteNum = 0;
 		nByteNum += 1;  // qos
 		nByteNum += 2;	// packet identifier
+		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttReceiver.getBytes().length;
+		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttSender.getBytes().length;
 
 		return nByteNum;
 	}
@@ -89,6 +95,8 @@ public class CMMqttEventPUBREC extends CMMqttEventFixedHeader {
 	{
 		putInt2BytesToByteBuffer(m_nPacketID);
 		m_bytes.put(m_qos);
+		putStringToByteBuffer(m_strMqttReceiver);
+		putStringToByteBuffer(m_strMqttSender);
 	}
 
 	@Override
@@ -96,6 +104,8 @@ public class CMMqttEventPUBREC extends CMMqttEventFixedHeader {
 	{
 		m_nPacketID = getInt2BytesFromByteBuffer(buf);
 		m_qos = buf.get();
+		m_strMqttReceiver = getStringFromByteBuffer(buf);
+		m_strMqttSender = getStringFromByteBuffer(buf);
 	}
 
 	//////////////////////////////////////////////////

@@ -54,6 +54,9 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		// initialize varaible header
 		m_strTopicName = "";
 		m_nPacketID = 0;
+		m_strMqttReceiver = "";
+		m_strMqttSender = "";
+		
 		// initialize payload
 		m_strAppMessage = "";
 		
@@ -263,6 +266,8 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		int nByteNum = 0;
 		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strTopicName.getBytes().length;	// topic name
 		nByteNum += 2;	// packet identifier
+		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttReceiver.getBytes().length;
+		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttSender.getBytes().length;
 
 		return nByteNum;
 	}
@@ -272,6 +277,8 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 		putStringToByteBuffer(m_strTopicName);
 		putInt2BytesToByteBuffer(m_nPacketID);
+		putStringToByteBuffer(m_strMqttReceiver);
+		putStringToByteBuffer(m_strMqttSender);
 	}
 
 	@Override
@@ -279,6 +286,8 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 		m_strTopicName = getStringFromByteBuffer(buf);
 		m_nPacketID = getInt2BytesFromByteBuffer(buf);
+		m_strMqttReceiver = getStringFromByteBuffer(buf);
+		m_strMqttSender = getStringFromByteBuffer(buf);
 	}
 
 	//////////////////////////////////////////////////
