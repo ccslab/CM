@@ -40,7 +40,7 @@ import kr.ac.konkuk.ccslab.cm.manager.CMMqttManager;
  *
  */
 public class CMMqttEventHandler extends CMEventHandler {
-
+	
 	public CMMqttEventHandler(CMInfo cmInfo) {
 		super(cmInfo);
 		m_nType = CMInfo.CM_MQTT_EVENT_HANDLER;
@@ -1176,7 +1176,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (CMInfo._CM_DEBUG) {
 			System.out.println("CMMqttEventHandler.processQoS3PUBREC(), received " + recEvent.toString());
 		}
-//		System.out.println("process pubrec3");
 
 		// to get session information
 		CMMqttSession session = null;
@@ -1202,6 +1201,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// from the sent-unack-publish list
 		if (strSysType.equals("CLIENT")) { //응답 이벤트 리스트에 방금 받은 pubrec 추가
 			CMEventSynchronizer eventSync = m_cmInfo.getEventInfo().getEventSynchronizer();
+			
 			if((eventSync.getWaitedEventType()==CMMqttEvent.PUBREC) 
 					&& (eventSync.getWaitedEventID()==recEvent.getPacketID())){
 				if(eventSync.getWaitedReceiver().isEmpty()) {
@@ -1217,12 +1217,9 @@ public class CMMqttEventHandler extends CMEventHandler {
 				}//end else
 			}
 			//받은 응답 이벤트 체크, notify
-//			System.out.println("::::::::::::::eventSync.getMinNumWaitedEvents()::"+eventSync.getMinNumWaitedEvents());
-//			System.out.println("::::::::::::eventSync.getSizeOfReplyEventList()::"+eventSync.getSizeOfReplyEventList());
 			if(eventSync.getMinNumWaitedEvents()<=eventSync.getSizeOfReplyEventList()) {
 				//remove publish from the sent-unack-publish list
 				session.removeSentUnAckPublish(recEvent.getPacketID());
-//				System.out.println(":::::::::::unackpub:::: "+session.getSentUnAckPublishList().toString());
 				//notify
 				synchronized(eventSync)
 				{

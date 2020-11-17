@@ -214,4 +214,20 @@ public abstract class CMMqttEvent extends CMEvent {
 		return m_strMqttSender;
 	}
 	
+	@Override
+	public boolean equals(Object obj) //super.equal==true면 packetid가 같은지 한번 더 체크.
+	{
+		boolean bRet = super.equals(obj);
+		
+		if(bRet) {
+			CMMqttEvent cme = (CMMqttEvent) obj;
+			if(cme.getPacketID() == getPacketID())
+				return true;
+		}
+		
+		
+		return false;
+	}
+
+	
 }
