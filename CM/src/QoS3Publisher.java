@@ -20,7 +20,6 @@ public class QoS3Publisher {
 		m_eventHandler = new QoS3PubEventHandler(m_clientStub);
 		m_bRun = true;
 		util=new QoS3Util();
-		util.usernum=0;
 	}
 	
 	public CMClientStub getClientStub()
@@ -77,7 +76,6 @@ public class QoS3Publisher {
 		Scanner m_scan = new Scanner(System.in);
 		int num;
 		boolean tf=true;
-		long average_time;
 		while(tf) {
 //			System.out.println(">");
 			num=m_scan.nextInt();
@@ -86,32 +84,19 @@ public class QoS3Publisher {
 				tf=false;
 				continue;
 			case 12: //test 1, qos 2
-				m_eventHandler.time.setTime_sum(0);
-				System.out.println("========start test");
-				m_eventHandler.time.setPub_publish(System.currentTimeMillis());
 				timeChk1_Qos2();
-				average_time=m_eventHandler.time.getTime_sum()/20;
-//				average_time=m_eventHandler.time.getTime_sum();
-				System.out.println("=============qos2 test end============");
-				System.out.println("average time========"+average_time);
 				break;
 			case 13: //test 1, qos 3
-				m_eventHandler.time.setTime_sum(0);
-				System.out.println("========start test");
-				m_eventHandler.time.setPub_publish(System.currentTimeMillis());
 				timeChk1_Qos3();
-				average_time=m_eventHandler.time.getTime_sum()/20;
-//				average_time=m_eventHandler.time.getTime_sum();
-				System.out.println("=============qos3 test end============");
-				System.out.println("average time========"+average_time);
 				break;
-				
+			case 22: //test 2, qos 2
+				timeChk2_Qos2();
+				break;
+			case 23: //test 2, qos 3
+				timeChk2_Qos3();
+				break;
 			}
 		}
-//		bRet=mqttConnect();
-//		System.out.println("========start test");
-//		m_eventHandler.time.setPub_publish(System.currentTimeMillis());
-//		timeChk1_Qos3();
 	}
 	
 	public boolean ploginDS()
@@ -142,22 +127,6 @@ public class QoS3Publisher {
 			return false;
 		}
 	}
-	
-	
-//	public void startTest()
-//	{
-//		System.out.println("client application starts.");
-//		int publisher_num=0;
-//		boolean keepGoing=ploginDS(publisher_num);
-//		publisher_num++;
-//		while(keepGoing) {
-//			mqttConnect();
-//			System.out.println("keepGoing(y/n):");
-//			String strDetail = m_scan.nextLine().trim();
-//			if(strDetail.contentEquals("n"))
-//				keepGoing = false;
-//		}
-//	}
 	
 	public boolean mqttConnect()
 	{
@@ -207,12 +176,12 @@ public class QoS3Publisher {
 
 	}
 	
-	public void mqttPublish(byte qos, int nMinNumWaitedEvents)
+	public void mqttPublish(byte qos, int nMinNumWaitedEvents, String strMessage)
 	{
 		System.out.println("========== MQTT publish");
 		
 		String strTopic = "3";
-		String strMessage = "message";
+//		String strMessage = "message";
 //		byte qos = (byte)3;
 		
 		boolean bDupFlag = false;
@@ -238,26 +207,63 @@ public class QoS3Publisher {
 	}
 	
 	public void timeChk1_Qos3(){
+		int packetnum=m_eventHandler.PACKETNUM;
 		int sub_num=1;
-//		start = System.currentTimeMillis();
+		String strMessage = "message";
 		
-		for(int i=0;i<20;i++)
-			mqttPublish((byte)3, sub_num);
+		m_eventHandler.time1.initializeTimeSum();
+		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
 		
-//		long end = System.currentTimeMillis();
-//		long time=end-start;
-//		return time;
+		System.out.println("=========== start_time1_qos3 ===========");
+		m_eventHandler.time1.setStartTime();
+		
+		for(int i=0;i<packetnum;i++)
+			mqttPublish((byte)3, sub_num, strMessage);
 	}
 	
 	public void timeChk1_Qos2(){
+		int packetnum=m_eventHandler.PACKETNUM;
 		int sub_num=1;
-//		start = System.currentTimeMillis();
+		String strMessage = "message";
 		
-		for(int i=0;i<20;i++)
-			mqttPublish((byte)2, sub_num);
+		m_eventHandler.time1.initializeTimeSum();
+		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
 		
-//		long end = System.currentTimeMillis();
-//		long time=end-start;
-//		return time;
+		System.out.println("=========== start_time1_qos2 ===========");
+		m_eventHandler.time1.setStartTime();
+		
+		for(int i=0;i<packetnum;i++)
+			mqttPublish((byte)2, sub_num, strMessage);
 	}
+	
+	public void timeChk2_Qos3(){
+		int packetnum=m_eventHandler.PACKETNUM;
+		int sub_num=1;
+		String strMessage = "nruter";
+		
+		m_eventHandler.time2.initializeTimeSum();
+		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
+		
+		System.out.println("=========== start_time2_qos3 ===========");
+		m_eventHandler.time2.setStartTime();
+		
+		for(int i=0;i<packetnum;i++)
+			mqttPublish((byte)3, sub_num, strMessage);
+	}
+	
+	public void timeChk2_Qos2(){
+		int packetnum=m_eventHandler.PACKETNUM;
+		int sub_num=1;
+		String strMessage = "return";
+		
+		m_eventHandler.time2.initializeTimeSum();
+		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
+		
+		System.out.println("=========== start_time2_qos2 ===========");
+		m_eventHandler.time2.setStartTime();
+		
+		for(int i=0;i<packetnum;i++)
+			mqttPublish((byte)2, sub_num, strMessage);
+	}
+	
 }

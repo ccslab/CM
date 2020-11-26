@@ -33,10 +33,13 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 	private int m_nMinNumWaitedEvents;  // for checking the completion of asynchronous castrecv service
 	private int m_nRecvReplyEvents;		// for checking the completion of asynchronous castrecv service
 	
-	long start;
-	long end;
-	long middle;
-	TestTime time;
+	TestTime time1;
+	TestTime time2;
+	
+	byte qos;
+	static final int PACKETNUM=20;
+	int count1;
+	int count2;
 		
 	public QoS3PubEventHandler(CMClientStub stub)
 	{
@@ -53,7 +56,11 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		m_strExt = null;
 		m_filePieces = null;
 		
-		time=new TestTime();
+		time1=new TestTime();
+		time2=new TestTime();
+		qos=(byte)-1;
+		count1=PACKETNUM;
+		count2=PACKETNUM;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -272,9 +279,12 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-//			end = System.currentTimeMillis(); //time_1
-//			long time=end-start;
-//			System.out.println("========결과: "+time+"ms");
+			count2-=1;
+			if(count2<1) {
+				//time 2(2-1)
+				time2.setEndTime();
+				printTime_2();
+			}
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -287,10 +297,12 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-			time.setPub_pubrec(System.currentTimeMillis());
-//			middle = System.currentTimeMillis(); //time_2
-//			long testtime=middle-start;
-//			System.out.println("========pubrec 결과: "+(middle-start)+"ms");
+//			count2-=1;
+//			if(count2<1) {
+//				//time 2(2-1)
+//				time2.setEndTime();
+//				printTime_2();
+//			}
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
@@ -303,21 +315,18 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubcompEvent);
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
-			time.setPub_pubcomp(System.currentTimeMillis());
-			printTime();
-//			end = System.currentTimeMillis(); //time_2
-//			long finaltime=end-start;
-//			System.out.println("========pubcomp 결과: "+finaltime+"ms");
+			count1-=1;
+			if(count1<1) {
+				//time 1
+				time1.setEndTime();
+				printTime_1();
+			}
 			break;
 		case CMMqttEvent.SUBACK:
 			CMMqttEventSUBACK subackEvent = (CMMqttEventSUBACK)cme;
 			//System.out.println("received "+subackEvent);
 			System.out.println("["+subackEvent.getSender()+"] sent CMMqttEvent.SUBACK, "
 					+subackEvent.getReturnCodeList());
-			//********test start
-//			System.out.println("========start test");
-//			time.setPub_publish(System.currentTimeMillis());
-//			timeChk1_Qos3();
 			break;
 		case CMMqttEvent.UNSUBACK:
 			CMMqttEventUNSUBACK unsubackEvent = (CMMqttEventUNSUBACK)cme;
@@ -376,68 +385,25 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 
 	}
 	
-//	public void mqttPublish(byte qos, int nMinNumWaitedEvents)
-//	{
-//		System.out.println("========== MQTT publish");
-//		
-//		String strTopic = "3";
-//		String strMessage = "message";
-////		byte qos = (byte)3;
-//		
-//		boolean bDupFlag = false;
-//		boolean bRetainFlag = false;
-//		String strReceiver = "";
-////		int nMinNumWaitedEvents = 1;
-//		
-//		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
-//		if(mqttManager == null)
-//		{
-//			System.err.println("CMMqttManager is null!");
-//			return;
-//		}
-//		
-//		if(qos==3) {
-//			System.out.println("strTopic:"+strTopic+", strMessage:"+strMessage+", qos:"+qos+", bDupFlag:"+bDupFlag
-//					+", bRetainFlag:"+bRetainFlag+", strReceiver:"+strReceiver+", nMinNumWaitedEvents:"+nMinNumWaitedEvents);
-//			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
-//		}else {
-//			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
-//		}
-//
-//	}
-//	
-//	public void timeChk1_Qos3(){
-//		int sub_num=1;
-////		start = System.currentTimeMillis();
-//		
-////		for(int i=0;i<10;i++)
-//			mqttPublish((byte)3, sub_num);
-//		
-////		long end = System.currentTimeMillis();
-////		long time=end-start;
-////		return time;
-//	}
-//	
-//	public void timeChk1_Qos2(){
-//		int sub_num=1;
-//		start = System.currentTimeMillis();
-//		
-////		for(int i=0;i<10;i++)
-//			mqttPublish((byte)2, sub_num);
-//		
-////		long end = System.currentTimeMillis();
-////		long time=end-start;
-////		return time;
-//	}
 	
-	public void printTime() {
-//		System.out.println("================= 결과 ================");
-		System.out.println("================= pub ================");
-		long p_all = time.getPub_pubcomp()-time.getPub_publish();
-		System.out.println("전체시간=pubcomp-publish===="+p_all);
-		time.setTime_sum(time.getTime_sum()+p_all);
-		System.out.println("시간합=time_sum============"+time.getTime_sum());
+	public void printTime_1() {
+		System.out.println("================= 시간 1 ================");
+//		System.out.println("start========"+time.getStartTime());
+//		System.out.println("end=========="+time.getEndTime());
+		time1.setTimeSum();
+		long sumtime=time1.getTimeSum();
+		System.out.println("sum_time======="+sumtime);
+		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
 	}
 	
 	
+	public void printTime_2() {
+		System.out.println("================= 시간 2-1 ================");
+//		System.out.println("start========"+time.getStartTime());
+//		System.out.println("end=========="+time.getEndTime());
+		time2.setTimeSum();
+		long sumtime=time2.getTimeSum();
+		System.out.println("sum_time======="+sumtime);
+		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
+	}
 }

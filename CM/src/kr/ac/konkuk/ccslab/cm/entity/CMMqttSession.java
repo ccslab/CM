@@ -635,7 +635,8 @@ public class CMMqttSession {
 	public synchronized boolean addSentUnAckPubrel(CMMqttEventPUBREL relEvent)
 	{
 		int nID = relEvent.getPacketID(); 
-		CMMqttEventPUBREL unackEvent = findSentUnAckPubrel(nID);
+		String strMqttReceiver = relEvent.getMqttReceiver();
+		CMMqttEventPUBREL unackEvent = findSentUnAckPubrel(nID, strMqttReceiver);
 		if(unackEvent != null)
 		{
 			System.err.println("CMMqttSession.addSentUnAckPubrel(), the same packet ID ("
@@ -648,22 +649,24 @@ public class CMMqttSession {
 		return m_sentUnAckPubrelList.addElement(relEvent);
 	}
 	
-	public synchronized CMMqttEventPUBREL findSentUnAckPubrel(int nPacketID)
+	public synchronized CMMqttEventPUBREL findSentUnAckPubrel(int nPacketID, String strMqttReceiver)
 	{
 		int nID = -1;
+		String strReceiver = "";
 		for(CMMqttEventPUBREL unackEvent : m_sentUnAckPubrelList.getList())
 		{
 			nID = unackEvent.getPacketID();
-			if(nID == nPacketID)
+			strReceiver = unackEvent.getMqttReceiver();
+			if((nID == nPacketID) && (strReceiver.equals(strMqttReceiver)))
 				return unackEvent;
 		}
 		
 		return null;
 	}
 	
-	public synchronized boolean removeSentUnAckPubrel(int nPacketID)
+	public synchronized boolean removeSentUnAckPubrel(int nPacketID, String strMqttReceiver)
 	{
-		CMMqttEventPUBREL unackEvent = findSentUnAckPubrel(nPacketID);
+		CMMqttEventPUBREL unackEvent = findSentUnAckPubrel(nPacketID, strMqttReceiver);
 		if(unackEvent == null)
 			return false;
 		

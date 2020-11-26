@@ -152,6 +152,11 @@ public abstract class CMMqttEvent extends CMEvent {
 		return nByteNum;
 	}
 	
+	public int getByteNumTest() //for qos3 test******************8
+	{
+		return getByteNum();
+	}
+	
 	@Override
 	protected void marshallBody() 
 	{

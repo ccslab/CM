@@ -1,46 +1,46 @@
 
 public class TestTime {
-	long pub_publish;
-	long brk_publish;
-	long brk_pubrec;
-	long pub_pubrec;
-	long pub_pubcomp;
+	long startTime;
+	long endTime;
 	
 	long time_sum;
-	public long getTime_sum() {
-		return time_sum;
+	
+	// getter & setter
+	public long getStartTime() {
+		return startTime;
 	}
-	public void setTime_sum(long time_sum) {
-		this.time_sum = time_sum;
+
+	public void setStartTime() {
+		startTime = System.currentTimeMillis();
 	}
-	public long getPub_pubcomp() {
-		return pub_pubcomp;
+
+	public long getEndTime() {
+		return endTime;
 	}
-	public void setPub_pubcomp(long pub_pubcomp) {
-		this.pub_pubcomp = pub_pubcomp;
+
+	public void setEndTime() {
+		endTime = System.currentTimeMillis();
 	}
-	public long getPub_publish() {
-		return pub_publish;
+
+	// time sum
+	public void setTimeSum() {
+		startTime=endTime-startTime;
 	}
-	public void setPub_publish(long pub_publish) {
-		this.pub_publish = pub_publish;
+	
+	public void initializeTimeSum() {
+		startTime = 0;
 	}
-	public long getBrk_publish() {
-		return brk_publish;
+	
+	public void addTimeSum(long t) {
+		startTime = startTime + t;
 	}
-	public void setBrk_publish(long brk_publish) {
-		this.brk_publish = brk_publish;
+
+	public void addTimeSum() {
+		long thisTime=endTime-startTime;
+		startTime = startTime + thisTime;
 	}
-	public long getBrk_pubrec() {
-		return brk_pubrec;
-	}
-	public void setBrk_pubrec(long brk_pubrec) {
-		this.brk_pubrec = brk_pubrec;
-	}
-	public long getPub_pubrec() {
-		return pub_pubrec;
-	}
-	public void setPub_pubrec(long pub_pubrec) {
-		this.pub_pubrec = pub_pubrec;
+
+	public long getTimeSum() {
+		return startTime;
 	}
 }

@@ -18,7 +18,6 @@ public class QoS3Subscriber {
 		m_eventHandler = new QoS3SubEventHandler(m_clientStub);
 		m_bRun = true;
 		util=new QoS3Util();
-		util.usernum=0;
 	}
 	
 	public CMClientStub getClientStub()

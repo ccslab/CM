@@ -1250,22 +1250,21 @@ public class CMMqttEventHandler extends CMEventHandler {
 			relEvent.setPacketID(nPacketID);
 			relEvent.setM_qos((byte)3);
 			
+			String strMqttReceiver = relEvent.getMqttReceiver();
+			
 			// to add PUBREL event to the session
-			if(session.findSentUnAckPubrel(nPacketID)==null) {
+			if(session.findSentUnAckPubrel(nPacketID, strMqttReceiver)==null) {
 				bRet = session.addSentUnAckPubrel(relEvent);
 				if (bRet && CMInfo._CM_DEBUG) {
 					System.out.println("CMMqttEventHandler.processQoS3PUBREC(), added PUBREL event " + "with packet ID ("
-							+ nPacketID + ") to the sent-unack-pubrel list.");
+							+ nPacketID + "), mqtt receiver("+strMqttReceiver+") to the sent-unack-pubrel list.");
 				}
 				if (!bRet) {
 					System.err.println("CMMqttEventHandler.processQoS3PUBREC(), error to add " + "PUBREL event with packet ID ("
-							+ nPacketID + ") to the sent-unack-pubrel list!");
+							+ nPacketID + "), mqtt receiver("+strMqttReceiver+") to the sent-unack-pubrel list!");
 					return false;
 				}
 			}
-			session.setMinNumWaitedEvents(session.getMinNumWaitedEvents()+1);
-			System.out.println("after add SentUnAckPubrel event:::::"+session.getsentUnAckPubrelList().toString());
-			System.out.println("session waited events::::: "+session.getMinNumWaitedEvents());
 
 			// send PUBREL event
 			bRet = CMEventManager.unicastEvent(relEvent, strReceiverServer, m_cmInfo);
@@ -1318,7 +1317,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 		boolean bRet;
 		if (strSysType.equals("CLIENT")) {
 			bRet = session.removeRecvUnAckPublish(nPacketID);
-//			System.out.println("pubrel after RecvUnAckPublish event:::::"+session.getRecvUnAckPublishList().toString());
 			if (bRet && CMInfo._CM_DEBUG) {
 				System.out.println("CMMqttEventHandler.processQoS3PUBREL(), deleted PUBLISH event " + "with packet ID ("
 						+ nPacketID + ") from the recv-unack-publish list.");
@@ -1363,7 +1361,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (CMInfo._CM_DEBUG) {
 			System.out.println("CMMqttEventHandler.processQoS3PUBCOMP(), received " + compEvent.toString());
 		}
-//		System.out.println("process pubcomp3");
 
 		// to get session information
 		CMMqttSession session = null;
@@ -1386,21 +1383,19 @@ public class CMMqttEventHandler extends CMEventHandler {
 		}
 		
 		if (strSysType.equals("CLIENT")) {
-//			System.out.println("at pubcomp SentUnAckPubrel event:::::"+session.getsentUnAckPubrelList().toString());
 			session.setMinNumWaitedEvents(session.getMinNumWaitedEvents()-1);
 			// to delete PUBREC from the recv-unack-pubrec list
-			if(session.getMinNumWaitedEvents()<1) {
-				int nPacketID = compEvent.getPacketID();
-				boolean bRet = session.removeSentUnAckPubrel(nPacketID);
-				if (bRet && CMInfo._CM_DEBUG) {
-					System.out.println("CMMqttEventHandler.processQoS3PUBCOMP(), deleted PUBREL event " + "with packet ID ("
-							+ nPacketID + ") from the sent-unack-pubrel list.");
-				}
-				if (!bRet) {
-					System.err.println("CMMqttEventHandler.processQoS3PUBCOMP(), error to delete " + "PUBREL event with packet ID ("
-							+ nPacketID + ") from the " + "sent-unack-pubrel list!");
-					return false;
-				}
+			int nPacketID = compEvent.getPacketID();
+			String strMqttReceiver = compEvent.getMqttSender();
+			boolean bRet = session.removeSentUnAckPubrel(nPacketID, strMqttReceiver);
+			if (bRet && CMInfo._CM_DEBUG) {
+				System.out.println("CMMqttEventHandler.processQoS3PUBCOMP(), deleted PUBREL event " + "with packet ID ("
+						+ nPacketID + "), mqtt receiver("+strMqttReceiver+") from the sent-unack-pubrel list.");
+			}
+			if (!bRet) {
+				System.err.println("CMMqttEventHandler.processQoS3PUBCOMP(), error to delete "
+						+ "PUBREL event with packet ID (" + nPacketID + "), mqtt receiver("+strMqttReceiver+") from the " + "sent-unack-pubrel list!");
+				return false;
 			}
 		} else if (strSysType.equals("SERVER")) {
 			sendPUBCOMP(compEvent);

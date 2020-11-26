@@ -195,7 +195,7 @@ public class QoS3SubEventHandler implements CMAppEventHandler {
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-//			mqttPublish(); //time_1
+			testTime2(pubEvent);
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -360,8 +360,8 @@ public class QoS3SubEventHandler implements CMAppEventHandler {
 		System.out.println("========== MQTT publish");
 		
 		String strTopic = "answer";
-		String strMessage = "message";
-		byte qos = (byte)2;
+		String strMessage = "answer";
+		byte qos = (byte)0;
 		
 		boolean bDupFlag = false;
 		boolean bRetainFlag = false;
@@ -381,5 +381,13 @@ public class QoS3SubEventHandler implements CMAppEventHandler {
 			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
 		}
 
+	}
+	
+	public boolean testTime2(CMMqttEventPUBLISH pe) {
+		boolean bRet=false;
+		if(pe.getAppMessage().equals("return")) {
+			mqttPublish();
+		}
+		return bRet;
 	}
 }
