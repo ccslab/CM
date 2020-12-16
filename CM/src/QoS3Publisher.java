@@ -13,6 +13,7 @@ public class QoS3Publisher {
 	private boolean m_bRun;
 	private Scanner m_scan = null;
 	private QoS3Util util;
+	int sub_num;
 	
 	public QoS3Publisher()
 	{
@@ -20,6 +21,7 @@ public class QoS3Publisher {
 		m_eventHandler = new QoS3PubEventHandler(m_clientStub);
 		m_bRun = true;
 		util=new QoS3Util();
+		sub_num=m_eventHandler.SUBNUM;
 	}
 	
 	public CMClientStub getClientStub()
@@ -208,7 +210,7 @@ public class QoS3Publisher {
 	
 	public void timeChk1_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
-		int sub_num=1;
+//		int sub_num=1;
 		String strMessage = "message";
 		
 		m_eventHandler.time1.initializeTimeSum();
@@ -223,7 +225,7 @@ public class QoS3Publisher {
 	
 	public void timeChk1_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
-		int sub_num=1;
+//		int sub_num=1;
 		String strMessage = "message";
 		
 		m_eventHandler.time1.initializeTimeSum();
@@ -238,7 +240,7 @@ public class QoS3Publisher {
 	
 	public void timeChk2_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
-		int sub_num=1;
+//		int sub_num=1;
 		String strMessage = "nruter";
 		
 		m_eventHandler.time2.initializeTimeSum();
@@ -253,7 +255,7 @@ public class QoS3Publisher {
 	
 	public void timeChk2_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
-		int sub_num=1;
+//		int sub_num=1;
 		String strMessage = "return";
 		
 		m_eventHandler.time2.initializeTimeSum();

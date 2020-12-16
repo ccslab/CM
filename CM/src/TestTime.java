@@ -12,6 +12,7 @@ public class TestTime {
 
 	public void setStartTime() {
 		startTime = System.currentTimeMillis();
+		time_sum=startTime;
 	}
 
 	public long getEndTime() {
@@ -24,7 +25,7 @@ public class TestTime {
 
 	// time sum
 	public void setTimeSum() {
-		startTime=endTime-startTime;
+		time_sum=endTime-startTime;
 	}
 	
 	public void initializeTimeSum() {
@@ -32,15 +33,15 @@ public class TestTime {
 	}
 	
 	public void addTimeSum(long t) {
-		startTime = startTime + t;
+		time_sum = time_sum + t;
 	}
 
 	public void addTimeSum() {
 		long thisTime=endTime-startTime;
-		startTime = startTime + thisTime;
+		time_sum = time_sum + thisTime;
 	}
 
 	public long getTimeSum() {
-		return startTime;
+		return time_sum;
 	}
 }
