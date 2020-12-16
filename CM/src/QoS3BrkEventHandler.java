@@ -682,13 +682,13 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	}
 	
 	public void printTime() {
-		System.out.println("================= 시간 3(2-2) ================");
-//		System.out.println("start=========="+time.getStartTime());
-//		System.out.println("end============"+time.getEndTime());
-		time.setTimeSum();
-		long sumtime=time.getTimeSum();
-		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
+//		System.out.println("================= 시간 3(2-2) ================");
+////		System.out.println("start=========="+time.getStartTime());
+////		System.out.println("end============"+time.getEndTime());
+//		time.setTimeSum();
+//		long sumtime=time.getTimeSum();
+//		System.out.println("sum_time======="+sumtime);
+//		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
 		
 	}
 	

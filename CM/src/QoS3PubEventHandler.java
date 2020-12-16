@@ -387,13 +387,13 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 	
 	
 	public void printTime_1() {
-		System.out.println("================= 시간 1 ================");
-//		System.out.println("start========"+time.getStartTime());
-//		System.out.println("end=========="+time.getEndTime());
-		time1.setTimeSum();
-		long sumtime=time1.getTimeSum();
-		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
+//		System.out.println("================= 시간 1 ================");
+////		System.out.println("start========"+time.getStartTime());
+////		System.out.println("end=========="+time.getEndTime());
+//		time1.setTimeSum();
+//		long sumtime=time1.getTimeSum();
+//		System.out.println("sum_time======="+sumtime);
+//		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
 	}
 	
 	

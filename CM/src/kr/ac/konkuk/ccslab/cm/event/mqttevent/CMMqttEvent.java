@@ -154,6 +154,9 @@ public abstract class CMMqttEvent extends CMEvent {
 	
 	public int getByteNumTest() //for qos3 test******************8
 	{
+//		System.out.println("getVarHeaderByteNum::::: "+getVarHeaderByteNum());
+//		System.out.println("getPayloadByteNum::::::: "+getPayloadByteNum());
+//		System.out.println("getFixedHeaderByteNum::: "+getFixedHeaderByteNum());
 		return getByteNum();
 	}
 	
