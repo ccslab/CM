@@ -385,7 +385,7 @@ public class QoS3SubEventHandler implements CMAppEventHandler {
 	
 	public boolean testTime2(CMMqttEventPUBLISH pe) {
 		boolean bRet=false;
-		if(pe.getAppMessage().equals("return")) {
+		if((pe.getQoS()==(byte)2)&&(pe.getAppMessage().equals("return"))) {
 			mqttPublish();
 		}
 		return bRet;
