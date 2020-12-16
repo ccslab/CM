@@ -620,10 +620,11 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 				time.setStartTime();
 				count=PACKETNUM;
 				//byte
-				tbyte.initializeByteSum();
+//				tbyte.initializeByteSum();
+				
 				qos=pubEvent.getQoS();
 			}
-			testBytePub(pubEvent);
+//			testBytePub(pubEvent);
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -636,21 +637,21 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-			testBytePub(pubrecEvent);
+//			testBytePub(pubrecEvent);
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
 			//System.out.println("received "+pubrelEvent);
 			System.out.println("["+pubrelEvent.getSender()+"] sent CMMqttEventPUBREL, "
 					+ "[packet ID: "+pubrelEvent.getPacketID()+"]");
-			testBytePub(pubrelEvent);
+//			testBytePub(pubrelEvent);
 			break;
 		case CMMqttEvent.PUBCOMP:
 			CMMqttEventPUBCOMP pubcompEvent = (CMMqttEventPUBCOMP)cme;
 			//System.out.println("received "+pubcompEvent);
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
-			testBytePub(pubcompEvent);
+//			testBytePub(pubcompEvent);
 			count-=1;
 			if((!pubcompEvent.getSender().equals(pubId)) && (count<1)) {
 				//time 3(2-2)
@@ -682,22 +683,22 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	}
 	
 	public void printTime() {
-//		System.out.println("================= 시간 3(2-2) ================");
-////		System.out.println("start=========="+time.getStartTime());
-////		System.out.println("end============"+time.getEndTime());
-//		time.setTimeSum();
-//		long sumtime=time.getTimeSum();
-//		System.out.println("sum_time======="+sumtime);
-//		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
+		System.out.println("================= 시간 3(2-2) ================");
+//		System.out.println("start=========="+time.getStartTime());
+//		System.out.println("end============"+time.getEndTime());
+		time.setTimeSum();
+		long sumtime=time.getTimeSum();
+		System.out.println("sum_time======="+sumtime);
+		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
 		
 	}
 	
-	public int testBytePub(CMMqttEvent cme) {
-		int iRet=cme.getByteNumTest();
-		tbyte.addByteSum(iRet);
-		System.out.println("================= byte ================");
-		System.out.println("now byte====="+iRet);
-		System.out.println("sum byte====="+tbyte.getByteSum());
-		return iRet;
-	}
+//	public int testBytePub(CMMqttEvent cme) {
+//		int iRet=cme.getByteNumTest();
+//		tbyte.addByteSum(iRet);
+//		System.out.println("================= byte ================");
+//		System.out.println("now byte====="+iRet);
+//		System.out.println("sum byte====="+tbyte.getByteSum());
+//		return iRet;
+//	}
 }
