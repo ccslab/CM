@@ -76,6 +76,7 @@ public class QoS3Subscriber {
 		Console console = System.console();
 		if(console == null)
 		{
+			
 			System.err.println("Unable to obtain console.");
 		}
 		

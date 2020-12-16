@@ -195,7 +195,7 @@ public class QoS3SubEventHandler implements CMAppEventHandler {
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-			testTime2(pubEvent);
+//			testTime2(pubEvent);
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -385,7 +385,7 @@ public class QoS3SubEventHandler implements CMAppEventHandler {
 	
 	public boolean testTime2(CMMqttEventPUBLISH pe) {
 		boolean bRet=false;
-		if((pe.getQoS()==(byte)2)&&(pe.getAppMessage().equals("return"))) {
+		if((pe.getQoS()==(byte)2)) {
 			mqttPublish();
 		}
 		return bRet;
