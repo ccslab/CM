@@ -1,11 +1,25 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Console;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -37,7 +51,6 @@ import kr.ac.konkuk.ccslab.cm.manager.CMConfigurator;
 import kr.ac.konkuk.ccslab.cm.manager.CMFileTransferManager;
 import kr.ac.konkuk.ccslab.cm.manager.CMMqttManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
-import kr.ac.konkuk.ccslab.cm.util.CMUtil;
 
 
 public class CMClientApp {
@@ -3143,6 +3156,8 @@ public class CMClientApp {
 		byte qos = (byte)0;
 		boolean bDupFlag = false;
 		boolean bRetainFlag = false;
+		String strReceiver = "";
+		int nMinNumWaitedEvents = 1;
 		
 		boolean bDetail = false;
 		System.out.print("Need all parameters? (\"y\" or \"n\", Enter for no): ");
@@ -3157,14 +3172,25 @@ public class CMClientApp {
 		
 		if(bDetail)
 		{
-			System.out.print("QoS (0,1, or 2, Enter for 0): ");
+			System.out.print("QoS (0,1,2 or 3, Enter for 0): ");
 			String strQoS = m_scan.nextLine().trim();
 			if(strQoS.contentEquals("1") || strQoS.contentEquals("2"))
 				qos = Byte.parseByte(strQoS);
+			else if(strQoS.contentEquals("3")) {
+				qos = Byte.parseByte(strQoS);
+				System.out.print("Appointed receiver (Enter for non-receiver): ");
+				strReceiver=m_scan.nextLine().trim();
+				System.out.print("Minimum waited events (Enter for 1): ");
+				String strMinNumWaitedEvents = m_scan.nextLine().trim();
+				if(!strMinNumWaitedEvents.isEmpty()) {
+					nMinNumWaitedEvents = Integer.parseInt(strMinNumWaitedEvents);
+				}
+			}
 			else if(!strQoS.contentEquals("0") && !strQoS.isEmpty())
 			{
 				System.err.println("Wrong QoS! QoS is set to 0!");
 			}
+			
 			System.out.print("DUP Flag (\"true\" or \"false\", Enter for false): ");
 			String strDupFlag = m_scan.nextLine().trim();
 			if(strDupFlag.contentEquals("true"))
@@ -3184,7 +3210,11 @@ public class CMClientApp {
 		
 		if(bDetail)
 		{
-			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);			
+			if(qos==3) {
+				mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+			}else {
+				mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+			}
 		}
 		else
 		{
@@ -3202,8 +3232,9 @@ public class CMClientApp {
 		System.out.print("Topic Filter: ");
 		strTopicFilter = m_scan.nextLine().trim();
 		String strQoS = null;
+		System.out.print("QoS (0,1,2 or 3, Enter for 0): ");
 		strQoS = m_scan.nextLine().trim();
-		if(strQoS.contentEquals("1") || strQoS.contentEquals("2"))
+		if(strQoS.contentEquals("1") || strQoS.contentEquals("2") || strQoS.contentEquals("3"))
 			qos = Byte.parseByte(strQoS);
 		else if(!strQoS.contentEquals("0") && !strQoS.isEmpty())
 		{
