@@ -200,8 +200,8 @@ public class QoS3Publisher {
 		
 		if(qos==3) {
 			System.out.println("strTopic:"+strTopic+", strMessage:"+strMessage+", qos:"+qos+", bDupFlag:"+bDupFlag
-					+", bRetainFlag:"+bRetainFlag+", strReceiver:"+strReceiver+", nMinNumWaitedEvents:"+nMinNumWaitedEvents);
-			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+					+", bRetainFlag:"+bRetainFlag+", strReceiver:"+strReceiver+", nMinNumWaitedEvents:"+1);
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, 1);
 		}else {
 			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
 		}
@@ -214,7 +214,7 @@ public class QoS3Publisher {
 		String strMessage = "message";
 		
 		m_eventHandler.time1.initializeTimeSum();
-		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
+		m_eventHandler.count1=m_eventHandler.PACKETNUM;
 		
 		System.out.println("=========== start_time1_qos3 ===========");
 		m_eventHandler.time1.setStartTime();
@@ -229,7 +229,7 @@ public class QoS3Publisher {
 		String strMessage = "message";
 		
 		m_eventHandler.time1.initializeTimeSum();
-		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
+		m_eventHandler.count1=m_eventHandler.PACKETNUM;
 		
 		System.out.println("=========== start_time1_qos2 ===========");
 		m_eventHandler.time1.setStartTime();

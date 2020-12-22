@@ -280,12 +280,12 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-			count2-=1;
-			if(count2<1 && pubEvent.getQoS()==(byte)0) {//count2<1 && 
-				//time 2(2-1)
-				time2.setEndTime();
-				printTime_2();
-			}
+//			count2-=1;
+//			if(count2<1 && pubEvent.getQoS()==(byte)0) {//count2<1 && 
+//				//time 2(2-1)
+//				time2.setEndTime();
+//				printTime_2();
+//			}
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -298,12 +298,12 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-			count2-=1;
-			if(count2<1 && pubrecEvent.getM_qos()==(byte)3) {//
-				//time 2(2-1)
-				time2.setEndTime();
-				printTime_2();
-			}
+//			count2-=1;
+//			if(count2<1 && pubrecEvent.getM_qos()==(byte)3) {//
+//				//time 2(2-1)
+//				time2.setEndTime();
+//				printTime_2();
+//			}
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
@@ -317,12 +317,13 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
 			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getM_qos());
-//			count2-=1;
-//			if(count2<1 && pubcompEvent.getM_qos()==(byte)3) {
-//				//time 2
-//				time2.setEndTime();
-//				printTime_2();
-//			}
+			count1-=1;
+//			System.out.println("count===================== "+count1);
+			if(count1<1) {
+				//time 1
+				time1.setEndTime();
+				printTime_1();
+			}
 			break;
 		case CMMqttEvent.SUBACK:
 			CMMqttEventSUBACK subackEvent = (CMMqttEventSUBACK)cme;
@@ -396,6 +397,9 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		long sumtime=time1.getTimeSum();
 		System.out.println("sum_time======="+sumtime);
 		System.out.println("avr_time======="+(double)sumtime/(PACKETNUM*SUBNUM));
+		
+//		count1=PACKETNUM*SUBNUM;
+//		time1.initializeTimeSum();
 	}
 	
 	
