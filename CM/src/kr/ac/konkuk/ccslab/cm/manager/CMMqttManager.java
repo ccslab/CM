@@ -214,13 +214,15 @@ public class CMMqttManager extends CMServiceManager {
 		CMConfigurationInfo confInfo = m_cmInfo.getConfigurationInfo();
 		String strSysType = confInfo.getSystemType();
 		if(qos == 3) 
+		{
 			bRet=publish(strTopic, strMsg, qos, bDupFlag, bRetainFlag, "", 1);
+		}
 		else 
 		{
 			if(strSysType.equals("SERVER"))
 				bRet = publishFromServer(strTopic, strMsg, qos, bDupFlag, bRetainFlag);
 			else
-				bRet = publishFromClient(strTopic, strMsg, qos, bDupFlag, bRetainFlag);
+				bRet = publishFromClient(strTopic, strMsg, qos, bDupFlag, bRetainFlag, "");
 		}
 		return bRet;
 	}
@@ -242,8 +244,14 @@ public class CMMqttManager extends CMServiceManager {
 		String strSysType = confInfo.getSystemType();
 
 		if (strSysType.equals("CLIENT"))
-			syncpubFromClient(strTopic, strMsg, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents, nTimeout);
-
+		{
+			if(nMinNumWaitedEvents>0)
+				syncpubFromClient(strTopic, strMsg, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents, nTimeout);
+			else
+				publishFromClient(strTopic, strMsg, qos, bDupFlag, bRetainFlag, strReceiver);
+		
+		}
+		
 		bRet = true;
 		return bRet;
 	}
@@ -263,7 +271,7 @@ public class CMMqttManager extends CMServiceManager {
 	}
 	
 	private boolean publishFromClient(String strTopic, String strMsg, 
-			byte qos, boolean bDupFlag, boolean bRetainFlag) 
+			byte qos, boolean bDupFlag, boolean bRetainFlag, String strReceiver) 
 	{
 		// client -> server
 		boolean bRet = false;
@@ -300,7 +308,7 @@ public class CMMqttManager extends CMServiceManager {
 		pubEvent.setRetainFlag(bRetainFlag);
 		// set variable header
 		pubEvent.setTopicName(strTopic);
-		if( qos == 1 || qos == 2 )
+		if( qos == 1 || qos == 2 || qos == 3)
 		{
 			pubEvent.setPacketID(session.getNextAssignedPacketID(CMMqttEvent.PUBLISH));
 		}
@@ -310,11 +318,15 @@ public class CMMqttManager extends CMServiceManager {
 		}
 		// set payload
 		pubEvent.setAppMessage(strMsg);
+		if(qos == 3) {
+			// set strReceiver[]
+			pubEvent.setM_strReceiver(strReceiver);
+		}
 		
 		// send PUBLISH event
-		String strReceiver = m_cmInfo.getInteractionInfo().getDefaultServerInfo()
+		String strReceiverServer = m_cmInfo.getInteractionInfo().getDefaultServerInfo()
 				.getServerName();
-		bRet = CMEventManager.unicastEvent(pubEvent,strReceiver, m_cmInfo);
+		bRet = CMEventManager.unicastEvent(pubEvent,strReceiverServer, m_cmInfo);
 		if(bRet && CMInfo._CM_DEBUG)
 		{
 			System.out.println("CMMqttManager.publishFromClient(), sent "
@@ -327,8 +339,8 @@ public class CMMqttManager extends CMServiceManager {
 			return false;
 		}
 		
-		// process QoS 1 or 2 case for the sent packet
-		if( qos == 1 || qos == 2 )
+		// process QoS 1 or 2 or async 3 case for the sent packet
+		if( qos == 1 || qos == 2 || qos == 3 )
 		{			
 			// add the sent event to the sent-unack-publish-list
 			bRet = session.addSentUnAckPublish(pubEvent);
@@ -505,7 +517,7 @@ public class CMMqttManager extends CMServiceManager {
 		CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
 		if(myself.getState() == CMInfo.CM_INIT || myself.getState() == CMInfo.CM_CONNECT)
 		{
-			System.err.println("CMMqttManager.publishFromClient(): "
+			System.err.println("CMMqttManager.syncpubFromClient(): "
 					+ "you must log in to the default server!");
 			return null;
 		}
@@ -560,11 +572,11 @@ public class CMMqttManager extends CMServiceManager {
 		// add the sent event to the sent-unack-publish-list
 		bRet = session.addSentUnAckPublish(pubEvent);
 		if (bRet && CMInfo._CM_DEBUG) {
-			System.out.println("CMMqttManager.publishFromClient(): " + "stored to sent unack publish list: "
+			System.out.println("CMMqttManager.syncpubFromClient(): " + "stored to sent unack publish list: "
 					+ pubEvent.toString());
 		}
 		if (!bRet) {
-			System.err.println("CMMqttManager.publishFromClient(): " + "error to store to sent unack publish list: "
+			System.err.println("CMMqttManager.syncpubFromClient(): " + "error to store to sent unack publish list: "
 					+ pubEvent.toString());
 			return null;
 		}
