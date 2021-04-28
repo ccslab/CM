@@ -215,7 +215,7 @@ public class CMMqttManager extends CMServiceManager {
 		String strSysType = confInfo.getSystemType();
 		if(qos == 3) 
 		{
-			bRet=publish(strTopic, strMsg, qos, bDupFlag, bRetainFlag, "", 1);
+			bRet=publish(strTopic, strMsg, qos, bDupFlag, bRetainFlag, "", 1); //qos 3 publish defalt: sync
 		}
 		else 
 		{
