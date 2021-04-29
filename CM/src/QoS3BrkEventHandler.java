@@ -652,8 +652,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
 //			testBytePub(pubcompEvent);
-			count-=1;
-			if((!pubcompEvent.getSender().equals(pubId)) && (count<1)) {
+			if((!pubcompEvent.getSender().equals(pubId))) {
 				//time 3(2-2)
 				time.setEndTime();
 				printTime();
@@ -683,7 +682,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	}
 	
 	public void printTime() {
-		System.out.println("================= 시간 3(2-2) ================");
+		System.out.println("================= 3(2-2) ================");
 //		System.out.println("start=========="+time.getStartTime());
 //		System.out.println("end============"+time.getEndTime());
 		time.setTimeSum();
