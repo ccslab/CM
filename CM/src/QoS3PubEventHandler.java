@@ -299,7 +299,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
 			count1-=1;
-			if(count1<1 && pubrecEvent.getM_qos()==(byte)3) {//
+			if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
 				//time 1
 				time1.setEndTime();
 //				printTime_1();
@@ -316,7 +316,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubcompEvent);
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
-			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getM_qos());
+			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getQos());
 //			count2-=1;
 //			System.out.println("count===================== "+count2);
 //			if(count2<1) {

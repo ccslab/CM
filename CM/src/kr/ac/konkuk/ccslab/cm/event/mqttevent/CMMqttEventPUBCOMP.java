@@ -67,11 +67,11 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 	}
 	
 	
-	public byte getM_qos() {
+	public byte getQos() {
 		return m_qos;
 	}
 
-	public void setM_qos(byte m_qos) {
+	public void setQos(byte m_qos) {
 		this.m_qos = m_qos;
 	}
 	
