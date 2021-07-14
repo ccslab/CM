@@ -227,33 +227,28 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 		return m_nPacketID;
 	}
-	
-	//::::::::::::::::::::
-	public String getM_strReceiver() {
+
+	public String getReceiver() {
 		return m_strReceiver;
 	}
-
-//	public void setM_strReceiver(List<String> strReceiver) {
-//		this.m_strReceiver = strReceiver;
-//	}
 	
-	public void setM_strReceiver(String strReceiver) {
+	public void setReceiver(String strReceiver) {
 		this.m_strReceiver = strReceiver;
 	}
 
-	public int getM_nMinNumWaitedEvents() {
+	public int getMinNumWaitedEvents() {
 		return m_nMinNumWaitedEvents;
 	}
 
-	public void setM_nMinNumWaitedEvents(int m_nMinNumWaitedEvents) {
+	public void setMinNumWaitedEvents(int m_nMinNumWaitedEvents) {
 		this.m_nMinNumWaitedEvents = m_nMinNumWaitedEvents;
 	}
 	
-	public boolean isM_isBlocked() {
+	public boolean isBlocked() {
 		return m_isBlocked;
 	}
 
-	public void setM_isBlocked(boolean m_isBlocked) {
+	public void setBlocked(boolean m_isBlocked) {
 		this.m_isBlocked = m_isBlocked;
 	}
 	
@@ -322,7 +317,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 //		int nByteNum = m_strAppMessage.getBytes().length;	// app message
 		int nByteNum = CMInfo.STRING_LEN_BYTES_LEN + m_strAppMessage.getBytes().length;	// app message
-		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strReceiver.getBytes().length;//::::::::::::::
+		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strReceiver.getBytes().length;
 		// this byte number does not contain the length of the string 
 		// because the length will be calculated separately.
 		return nByteNum;
@@ -334,7 +329,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		// The string length will be calculated separately.
 //		m_bytes.put(m_strAppMessage.getBytes());
 		putStringToByteBuffer(m_strAppMessage);
-		putStringToByteBuffer(m_strReceiver);//추가된 필드:::::::::::::::::::::
+		putStringToByteBuffer(m_strReceiver);
 	}
 
 	@Override
@@ -346,7 +341,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 //		buf.get(appMsgBytes);
 //		m_strAppMessage = new String(appMsgBytes);
 		m_strAppMessage = getStringFromByteBuffer(buf);
-		m_strReceiver = getStringFromByteBuffer(buf);//::::::::::::::::::::::::
+		m_strReceiver = getStringFromByteBuffer(buf);
 	}
 
 	//////////////////////////////////////////////////
