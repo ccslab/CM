@@ -49,6 +49,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	byte qos;
 	static final int PACKETNUM=20;
 	int count;
+	QoS3Util util;
 
 	public QoS3BrkEventHandler(CMServerStub serverStub)
 	{
@@ -59,6 +60,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		time=new TestTime();
 		tbyte=new TestByte();
 		tbyte.initializeByteSum();
+		util=new QoS3Util();
 		
 		qos=(byte)-1;
 		count=PACKETNUM;
@@ -613,17 +615,23 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			System.out.println("[packet ID: "+pubEvent.getPacketID()
 					+"], [topic: "+pubEvent.getTopicName()+"], [msg: "
 					+pubEvent.getAppMessage()+"], [qos: "+pubEvent.getQoS()+"]");
-			if(qos!=pubEvent.getQoS()) {
-				pubId=pubEvent.getSender();
-				//time 3(2-2)
-				time.initializeTimeSum();
-				time.setStartTime();
-				count=PACKETNUM;
-				//byte
-//				tbyte.initializeByteSum();
-				
-				qos=pubEvent.getQoS();
+			if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
+				printTime();
 			}
+			else {
+				timeTest3(pubEvent);
+			}
+//			if(qos!=pubEvent.getQoS()) {
+//				pubId=pubEvent.getSender();
+//				//time 3(2-2)
+//				time.initializeTimeSum();
+//				time.setStartTime();
+//				count=PACKETNUM;
+//				//byte
+////				tbyte.initializeByteSum();
+//				
+//				qos=pubEvent.getQoS();
+//			}
 //			testBytePub(pubEvent);
 			break;
 		case CMMqttEvent.PUBACK:
@@ -637,6 +645,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
+			timeTest3(pubrecEvent);
 //			testBytePub(pubrecEvent);
 			break;
 		case CMMqttEvent.PUBREL:
@@ -655,7 +664,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			if((!pubcompEvent.getSender().equals(pubId))) {
 				//time 3(2-2)
 				time.setEndTime();
-				printTime();
+//				printTime();
 			}
 			break;
 		case CMMqttEvent.SUBSCRIBE:
@@ -685,12 +694,39 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		System.out.println("================= 3(2-2) ================");
 //		System.out.println("start=========="+time.getStartTime());
 //		System.out.println("end============"+time.getEndTime());
-		time.setTimeSum();
-		long sumtime=time.getTimeSum();
+		
+		long sumtime=0;
+		
+		for(QoS3TimeList newEvent : util.testTime3List.getList())
+		{
+			sumtime+=newEvent.getPingpongTime();
+		}
+		
 		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/PACKETNUM);
+		System.out.println("avr_time======="+(double)sumtime/util.testTime3List.getSize());
 		
 	}
+	public void timeTest3(CMMqttEventPUBLISH publishEvent) { //publish side
+		int nid=publishEvent.getID();
+		String sub=publishEvent.getMqttReceiver();
+//		String msg=publishEvent.getAppMessage();
+		long time=System.currentTimeMillis();
+		
+		boolean bRet = util.addtestTime3List(nid, sub, time);
+		System.out.println("add into ==== nid======="+nid+"sub======="+sub+"time======="+time);
+		System.out.println("timeTest3 publish======="+bRet);
+	}
+
+	public void timeTest3(CMMqttEventPUBREC pubrecEvent) { //pubrec side
+		int nid=pubrecEvent.getID();
+		String sub=pubrecEvent.getMqttSender();
+		long time=System.currentTimeMillis();
+		
+		boolean bRet = util.modifytestTime3List(nid, sub, time);
+		System.out.println("modify into ==== nid======="+nid+"sub======="+sub+"time======="+time);
+		System.out.println("timeTest3 pubrec======="+bRet);
+	}
+	
 	
 //	public int testBytePub(CMMqttEvent cme) {
 //		int iRet=cme.getByteNumTest();

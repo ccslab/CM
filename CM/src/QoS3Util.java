@@ -1,8 +1,16 @@
 import java.util.Random;
 
+import kr.ac.konkuk.ccslab.cm.entity.CMList;
+
+
 public class QoS3Util {
 	String strUserName;
 	String usernum;
+	CMList<QoS3TimeList> testTime3List;
+	
+	QoS3Util(){
+		testTime3List=new CMList<QoS3TimeList>();
+	}
 	
 	public String randomUserName() {
 		usernum=numberGen(4,1);
@@ -41,6 +49,76 @@ public class QoS3Util {
 			}
 		}
 		return numStr;
+	}
+	
+	
+	public boolean addtestTime3List(int nPacketID,	String strSubscriber,long PUBLISHTime)
+	{
+//		int nPacketID = relEvent.getPacketID(); 
+//		String strMqttReceiver = relEvent.getMqttReceiver();
+		QoS3TimeList newEvent = new QoS3TimeList(nPacketID,strSubscriber,PUBLISHTime);
+		if(newEvent != null)
+		{
+			System.err.println("test.addtestTime3List(), the same packet ID ("
+					+nPacketID+") already exists!");
+			System.err.println(newEvent.toString());
+			
+			return false;
+		}
+		
+		return testTime3List.addElement(newEvent);
+	}
+	
+	public boolean modifytestTime3List(int nPacketID, String strSubscriber, long time)
+	{
+		int nID = -1;
+		String strReceiver = "";
+		for(QoS3TimeList newEvent : testTime3List.getList())
+		{
+			nID = newEvent.getPacketID();
+			strReceiver = newEvent.getSubscriber();
+			if((nID == nPacketID) && (strReceiver.equals(strSubscriber))) {
+				newEvent.setPUBRECTime(time);
+				newEvent.setPingpongTime(newEvent.getPUBRECTime() - newEvent.getPUBLISHTime());
+				return true;
+			}
+				
+		}
+		
+		return false;
+	}
+	
+	public QoS3TimeList findtestTime3List(int nPacketID, String strSubscriber)
+	{
+		int nID = -1;
+		String strReceiver = "";
+		for(QoS3TimeList newEvent : testTime3List.getList())
+		{
+			nID = newEvent.getPacketID();
+			strReceiver = newEvent.getSubscriber();
+			if((nID == nPacketID) && (strReceiver.equals(strSubscriber))) {
+				return newEvent;
+			}
+				
+		}
+		
+		return null;
+	}
+	
+	public boolean removetestTime3List(int nPacketID, String strMqttReceiver)
+	{
+		QoS3TimeList unackEvent = findtestTime3List(nPacketID, strMqttReceiver);
+		if(unackEvent == null)
+			return false;
+		
+		
+		return testTime3List.removeElement(unackEvent);
+	}
+	
+	public void removeAlltestTime3List()
+	{
+		testTime3List.removeAllElements();
+		return;
 	}
 
 }

@@ -97,6 +97,9 @@ public class QoS3Publisher {
 			case 23: //test 2, qos 3
 				timeChk2_Qos3();
 				break;
+			case 99:
+				initBroker();
+				break;
 			}
 		}
 	}
@@ -208,6 +211,32 @@ public class QoS3Publisher {
 
 	}
 	
+	public void initBroker()
+	{
+		System.out.println("========== MQTT publish");
+		
+		String strTopic = "COMMANDS";
+		byte qos = (byte)0;
+		String strMessage = "print";
+//		String strMessage = "message";
+//		byte qos = (byte)3;
+		
+		boolean bDupFlag = false;
+		boolean bRetainFlag = false;
+		String strReceiver = "";
+//		int nMinNumWaitedEvents = 1;
+		
+		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
+		if(mqttManager == null)
+		{
+			System.err.println("CMMqttManager is null!");
+			return;
+		}
+		
+		mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+
+	}
+	
 	public void timeChk1_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
@@ -239,7 +268,7 @@ public class QoS3Publisher {
 		}
 	}
 	
-	public void timeChk2_Qos3(){
+	public boolean timeChk2_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "nruter";
@@ -250,12 +279,14 @@ public class QoS3Publisher {
 		System.out.println("=========== start_time2_qos3 ===========");
 		m_eventHandler.time2.setStartTime();
 		
-		for(int i=0;i<packetnum;i++) {
+		for(int i=0;i<1;i++) {//packetnum
 			mqttPublish((byte)3, 0, strMessage);
 		}
+		
+		return true;
 	}
 	
-	public void timeChk2_Qos2(){
+	public boolean timeChk2_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "return";
@@ -266,8 +297,10 @@ public class QoS3Publisher {
 		System.out.println("=========== start_time2_qos2 ===========");
 		m_eventHandler.time2.setStartTime();
 		
-		for(int i=0;i<packetnum;i++)
+		for(int i=0;i<1;i++)//packetnum
 			mqttPublish((byte)2, 0, strMessage);
+		
+		return true;
 	}
 	
 }
