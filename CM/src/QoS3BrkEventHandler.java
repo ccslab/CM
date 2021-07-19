@@ -696,33 +696,36 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 //		System.out.println("end============"+time.getEndTime());
 		
 		long sumtime=0;
+		int size=0;
 		
 		for(QoS3TimeList newEvent : util.testTime3List.getList())
 		{
-			sumtime+=newEvent.getPingpongTime();
+			for(QoS3PubrecList recEvent : newEvent.pubrecList.getList()) {
+				sumtime += recEvent.getPingpongTime();
+			}
+			size += newEvent.pubrecList.getSize();
 		}
 		
 		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/util.testTime3List.getSize());
+		System.out.println("avr_time======="+(double)sumtime/size);
 		
 	}
 	public void timeTest3(CMMqttEventPUBLISH publishEvent) { //publish side
-		int nid=publishEvent.getID();
-		String sub=publishEvent.getMqttReceiver();
+		int nid=publishEvent.getPacketID();
 //		String msg=publishEvent.getAppMessage();
 		long time=System.currentTimeMillis();
 		
-		boolean bRet = util.addtestTime3List(nid, sub, time);
-		System.out.println("add into ==== nid======="+nid+"sub======="+sub+"time======="+time);
+		boolean bRet = util.add(nid, time);
+		System.out.println("add into ==== nid======="+nid+"time======="+time);
 		System.out.println("timeTest3 publish======="+bRet);
 	}
 
 	public void timeTest3(CMMqttEventPUBREC pubrecEvent) { //pubrec side
-		int nid=pubrecEvent.getID();
+		int nid=pubrecEvent.getPacketID();
 		String sub=pubrecEvent.getMqttSender();
 		long time=System.currentTimeMillis();
 		
-		boolean bRet = util.modifytestTime3List(nid, sub, time);
+		boolean bRet = util.addElement(nid, sub, time);
 		System.out.println("modify into ==== nid======="+nid+"sub======="+sub+"time======="+time);
 		System.out.println("timeTest3 pubrec======="+bRet);
 	}

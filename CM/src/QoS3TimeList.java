@@ -1,17 +1,16 @@
+import kr.ac.konkuk.ccslab.cm.entity.CMList;
 
 public class QoS3TimeList {
 	
 	int nPacketID;
-	String strSubscriber;
 	
 	long PUBLISHTime;
-	long PUBRECTime;
-	long pingpongTime;
+	CMList<QoS3PubrecList> pubrecList;
 	
-	QoS3TimeList(int nPacketID,	String strSubscriber,long PUBLISHTime){
+	QoS3TimeList(int nPacketID,	long PUBLISHTime){
 		this.nPacketID=nPacketID;
-		this.strSubscriber=strSubscriber;
 		this.PUBLISHTime=PUBLISHTime;
+		pubrecList=new CMList<QoS3PubrecList>();
 	}
 	
 	public int getPacketID() {
@@ -20,29 +19,52 @@ public class QoS3TimeList {
 	public void setPacketID(int nPacketID) {
 		this.nPacketID = nPacketID;
 	}
-	public String getSubscriber() {
-		return strSubscriber;
-	}
-	public void setSubscriber(String strSubscriber) {
-		this.strSubscriber = strSubscriber;
-	}
 	public long getPUBLISHTime() {
 		return PUBLISHTime;
 	}
 	public void setPUBLISHTime(long pUBLISHTime) {
 		PUBLISHTime = pUBLISHTime;
 	}
-	public long getPUBRECTime() {
-		return PUBRECTime;
+	
+	public boolean add(String strSubscriber, long PUBRECTime, long pingpongTime)
+	{
+		QoS3PubrecList newEvent = new QoS3PubrecList(strSubscriber, PUBRECTime, pingpongTime);
+		if(newEvent != null)
+		{
+			System.err.println("test.addtestTime3List(), the same packet ID ("+nPacketID+"-"+strSubscriber+") already exists!");
+			System.err.println(newEvent.toString());
+			return false;
+		}
+		return pubrecList.addElement(newEvent);
 	}
-	public void setPUBRECTime(long pUBRECTime) {
-		PUBRECTime = pUBRECTime;
+	
+	public QoS3PubrecList find(String strSubscriber)
+	{
+		int nID = -1;
+		String strReceiver = "";
+		for(QoS3PubrecList newEvent : pubrecList.getList())
+		{
+			strReceiver = newEvent.getSubscriber();
+			if(strReceiver.equals(strSubscriber)) {
+				return newEvent;
+			}
+		}
+		return null;
 	}
-	public long getPingpongTime() {
-		return pingpongTime;
+	
+	public boolean remove(String strSubscriber)
+	{
+		QoS3PubrecList unackEvent = find(strSubscriber);
+		if(unackEvent == null)
+			return false;
+
+		return pubrecList.removeElement(unackEvent);
 	}
-	public void setPingpongTime(long pingpongTime) {
-		this.pingpongTime = pingpongTime;
+	
+	public void removeAll()
+	{
+		pubrecList.removeAllElements();
+		return;
 	}
 
 }

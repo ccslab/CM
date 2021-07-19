@@ -52,70 +52,56 @@ public class QoS3Util {
 	}
 	
 	
-	public boolean addtestTime3List(int nPacketID,	String strSubscriber,long PUBLISHTime)
+	public boolean add(int nPacketID, long PUBLISHTime)
 	{
-//		int nPacketID = relEvent.getPacketID(); 
-//		String strMqttReceiver = relEvent.getMqttReceiver();
-		QoS3TimeList newEvent = new QoS3TimeList(nPacketID,strSubscriber,PUBLISHTime);
+		QoS3TimeList newEvent = new QoS3TimeList(nPacketID, PUBLISHTime);
 		if(newEvent != null)
 		{
-			System.err.println("test.addtestTime3List(), the same packet ID ("
-					+nPacketID+") already exists!");
+			System.err.println("test.addtestTime3List(), the same packet ID ("+nPacketID+") already exists!");
 			System.err.println(newEvent.toString());
-			
 			return false;
 		}
-		
 		return testTime3List.addElement(newEvent);
 	}
 	
-	public boolean modifytestTime3List(int nPacketID, String strSubscriber, long time)
+	public boolean addElement(int nPacketID, String strSubscriber, long PUBRECTime)
 	{
-		int nID = -1;
-		String strReceiver = "";
-		for(QoS3TimeList newEvent : testTime3List.getList())
-		{
-			nID = newEvent.getPacketID();
-			strReceiver = newEvent.getSubscriber();
-			if((nID == nPacketID) && (strReceiver.equals(strSubscriber))) {
-				newEvent.setPUBRECTime(time);
-				newEvent.setPingpongTime(newEvent.getPUBRECTime() - newEvent.getPUBLISHTime());
-				return true;
-			}
-				
-		}
+		QoS3TimeList timeEvent = find(nPacketID);
+		if(timeEvent == null)
+			return false;
+		
+		long pingpongTime = PUBRECTime - timeEvent.getPUBLISHTime();
+		
+		timeEvent.add(strSubscriber, PUBRECTime, pingpongTime);
 		
 		return false;
 	}
 	
-	public QoS3TimeList findtestTime3List(int nPacketID, String strSubscriber)
+	public QoS3TimeList find(int nPacketID)
 	{
 		int nID = -1;
-		String strReceiver = "";
 		for(QoS3TimeList newEvent : testTime3List.getList())
 		{
 			nID = newEvent.getPacketID();
-			strReceiver = newEvent.getSubscriber();
-			if((nID == nPacketID) && (strReceiver.equals(strSubscriber))) {
+			if(nID == nPacketID) {
 				return newEvent;
 			}
-				
 		}
-		
 		return null;
 	}
 	
-	public boolean removetestTime3List(int nPacketID, String strMqttReceiver)
+	public boolean remove(int nPacketID)
 	{
-		QoS3TimeList unackEvent = findtestTime3List(nPacketID, strMqttReceiver);
-		if(unackEvent == null)
+		QoS3TimeList timeEvent = find(nPacketID);
+		if(timeEvent == null)
 			return false;
 		
+		timeEvent.removeAll();
 		
-		return testTime3List.removeElement(unackEvent);
+		return testTime3List.removeElement(timeEvent);
 	}
 	
-	public void removeAlltestTime3List()
+	public void removeAll()
 	{
 		testTime3List.removeAllElements();
 		return;
