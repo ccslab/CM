@@ -38,7 +38,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 	
 	byte qos;
 	static final int PACKETNUM=20;
-	static final int SUBNUM=50;
+	int SUBNUM;
 	int count1;
 	int count2;
 		
@@ -57,6 +57,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		m_strExt = null;
 		m_filePieces = null;
 		
+		SUBNUM=1;
 		time1=new TestTime();
 		time2=new TestTime();
 		qos=(byte)-1;
@@ -317,16 +318,16 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
 			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getQos());
-//			count2-=1;
-//			System.out.println("count===================== "+count2);
-//			if(count2<1) {
-//				//time 2
-//				time2.setEndTime();
-//				printTime_2();
-//			}
-			if(count1<1) {
-				printTime_1();
+			count2-=1;
+			System.out.println("count===================== "+count2);
+			if(count2<1) {
+				//time 2
+				time2.setEndTime();
+				printTime_2();
 			}
+//			if(count1<1) {
+//				printTime_1();
+//			}
 			break;
 		case CMMqttEvent.SUBACK:
 			CMMqttEventSUBACK subackEvent = (CMMqttEventSUBACK)cme;

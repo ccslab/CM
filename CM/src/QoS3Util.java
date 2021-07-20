@@ -55,7 +55,7 @@ public class QoS3Util {
 	public boolean add(int nPacketID, long PUBLISHTime)
 	{
 		QoS3TimeList newEvent = new QoS3TimeList(nPacketID, PUBLISHTime);
-		if(newEvent != null)
+		if(find(nPacketID) != null)
 		{
 			System.err.println("test.addtestTime3List(), the same packet ID ("+nPacketID+") already exists!");
 			System.err.println(newEvent.toString());

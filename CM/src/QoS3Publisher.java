@@ -103,9 +103,21 @@ public class QoS3Publisher {
 			case 232: //test 2, qos 3, sync
 				timeChk2_Qos3_sync();
 				break;
-			case 99:
+			case 998:
 				initBroker();
 				break;
+			case 999:
+				initPublisher();
+				break;
+			case 77:
+				int sn = m_scan.nextInt();
+				m_eventHandler.SUBNUM = sn;
+				sub_num = sn;
+				System.out.println("=================================");
+				System.out.println("number of subscribers : " + sn);
+				System.out.println("=================================");
+				break;
+				
 			}
 		}
 	}
@@ -273,6 +285,11 @@ public class QoS3Publisher {
 
 	}
 	
+	public void initPublisher(){
+		m_eventHandler.time1.initializeTimeSum();
+		m_eventHandler.time2.initializeTimeSum();
+	}
+	
 	public void timeChk1_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
@@ -330,7 +347,7 @@ public class QoS3Publisher {
 		System.out.println("=========== start_time2_qos3 ===========");
 		m_eventHandler.time2.setStartTime();
 		
-		for(int i=0;i<1;i++) {//packetnum
+		for(int i=0;i<packetnum;i++) {
 			mqttPublish((byte)3, -1, strMessage);
 		}
 		
@@ -348,7 +365,7 @@ public class QoS3Publisher {
 		System.out.println("=========== start_time2_qos3 ===========");
 		m_eventHandler.time2.setStartTime();
 		
-		for(int i=0;i<1;i++) {//packetnum
+		for(int i=0;i<packetnum;i++) {
 			mqttSyncPublish((byte)3, 1, strMessage);
 		}
 		
@@ -366,7 +383,7 @@ public class QoS3Publisher {
 		System.out.println("=========== start_time2_qos2 ===========");
 		m_eventHandler.time2.setStartTime();
 		
-		for(int i=0;i<1;i++)//packetnum
+		for(int i=0;i<packetnum;i++)
 			mqttPublish((byte)2, 0, strMessage);
 		
 		return true;
