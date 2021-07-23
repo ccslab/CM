@@ -103,7 +103,7 @@ public class QoS3Publisher {
 			case 232: //test 2, qos 3, sync
 				timeChk2_Qos3_sync();
 				break;
-			case 998:
+			case 99:
 				initBroker();
 				break;
 			case 999:
@@ -290,7 +290,7 @@ public class QoS3Publisher {
 		m_eventHandler.time2.initializeTimeSum();
 	}
 	
-	public void timeChk1_Qos3(){
+	public void timeChk2_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "message";
@@ -305,7 +305,7 @@ public class QoS3Publisher {
 			mqttPublish((byte)3, -1, strMessage);
 	}
 	
-	public void timeChk1_Qos3_sync(){
+	public void timeChk2_Qos3_sync(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "message";
@@ -320,7 +320,7 @@ public class QoS3Publisher {
 			mqttSyncPublish((byte)3, 1, strMessage);
 	}
 	
-	public void timeChk1_Qos2(){
+	public void timeChk2_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "message";
@@ -336,7 +336,7 @@ public class QoS3Publisher {
 		}
 	}
 	
-	public boolean timeChk2_Qos3(){
+	public boolean timeChk1_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "nruter";
@@ -354,7 +354,7 @@ public class QoS3Publisher {
 		return true;
 	}
 	
-	public boolean timeChk2_Qos3_sync(){
+	public boolean timeChk1_Qos3_sync(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "nruter";
@@ -372,7 +372,7 @@ public class QoS3Publisher {
 		return true;
 	}
 	
-	public boolean timeChk2_Qos2(){
+	public boolean timeChk1_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
 //		int sub_num=1;
 		String strMessage = "return";
