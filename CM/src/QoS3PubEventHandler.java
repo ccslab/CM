@@ -282,8 +282,8 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
 			count1-=1;
-			if(count1<1 && pubEvent.getQoS()==(byte)0) {//count2<1 && 
-				//time 1
+			if(count1<1 && pubEvent.getQoS()==(byte)0) { 
+				//time 1 :: rcv qos 0 pub for answer
 				time1.setEndTime();
 //				printTime_1();
 			}
@@ -301,7 +301,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
 			count1-=1;
 			if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
-				//time 1
+				//time 1 :: rcv qos 3 rec for answer
 				time1.setEndTime();
 //				printTime_1();
 			}
@@ -321,10 +321,11 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			count2-=1;
 			System.out.println("count===================== "+count2);
 			if(count2<1) {
-				//time 2
+				//time 2 :: end.
 				time2.setEndTime();
 				printTime_2();
 			}
+			
 //			if(count1<1) {
 //				printTime_1();
 //			}
@@ -416,7 +417,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		System.out.println("sum_time======="+sumtime);
 		System.out.println("avr_time======="+(double)sumtime/(PACKETNUM*SUBNUM));
 		
-//		count2=PACKETNUM*SUBNUM;
-//		time2.initializeTimeSum();
+//		count1=PACKETNUM*SUBNUM;
+//		time1.initializeTimeSum();
 	}
 }
