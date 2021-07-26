@@ -37,7 +37,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 	TestTime time2;
 	
 	byte qos;
-	static final int PACKETNUM=20;
+	static final int PACKETNUM=2;
 	int SUBNUM;
 	int count1;
 	int count2;

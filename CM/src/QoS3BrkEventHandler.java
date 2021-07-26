@@ -640,7 +640,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 				
 				qos=pubEvent.getQoS();
 			}
-			testBytePub(pubEvent);
+//			testBytePub(pubEvent);
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -655,7 +655,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
 			timeTest3(pubrecEvent);
 			
-			testBytePub(pubrecEvent);
+//			testBytePub(pubrecEvent);
 			count--;
 			System.out.println("=========== count: "+count+" ===========");
 			if((!pubrecEvent.getSender().equals(pubId))) {
@@ -741,12 +741,12 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	}
 	
 	
-	public int testBytePub(CMMqttEvent cme) {
-		int iRet=cme.getByteNumTest();
-		tbyte.addByteSum(iRet);
-		System.out.println("================= byte ================");
-		System.out.println("now byte====="+iRet);
-		System.out.println("sum byte====="+tbyte.getByteSum());
-		return iRet;
-	}
+//	public int testBytePub(CMMqttEvent cme) {
+//		int iRet=cme.getByteNumTest();
+//		tbyte.addByteSum(iRet);
+//		System.out.println("================= byte ================");
+//		System.out.println("now byte====="+iRet);
+//		System.out.println("sum byte====="+tbyte.getByteSum());
+//		return iRet;
+//	}
 }
