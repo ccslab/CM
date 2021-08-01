@@ -47,7 +47,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	TestTime time;
 	TestByte tbyte;
 	byte qos;
-	static final int PACKETNUM=20;
+	int packetnum;
 	int sub_num;
 	int count;
 	QoS3Util util;
@@ -65,7 +65,8 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		sub_num=0;
 		
 		qos=(byte)-1;
-		count=PACKETNUM;
+		packetnum=20;
+		count=packetnum;
 	}
 	
 	@Override
@@ -622,7 +623,11 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 					+"], [topic: "+pubEvent.getTopicName()+"], [msg: "
 					+pubEvent.getAppMessage()+"], [qos: "+pubEvent.getQoS()+"]");
 			
-			if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
+			if (pubEvent.getQoS() == (byte) 0 && pubEvent.getTopicName().equals("SETPCKNUM")) {
+				packetnum = Integer.parseInt(pubEvent.getAppMessage());
+				count = packetnum;
+			}
+			else if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
 				printTime();
 			}
 			else if(pubEvent.getQoS()==(byte)3){
@@ -634,7 +639,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 				//time 3(2-2)
 				time.initializeTimeSum();
 				time.setStartTime();
-				count=PACKETNUM*sub_num;
+				count=packetnum*sub_num;
 				//byte
 //				tbyte.initializeByteSum();
 				

@@ -104,7 +104,10 @@ public class QoS3Publisher {
 				timeChk2_Qos3_sync();
 				break;
 			case 99:
-				initBroker();
+				printBrokerResult(); //test 3, print result
+				break;
+			case 11:
+				setBrokerPacketNum(); //test 3, set packetnum (broker count)
 				break;
 			case 77:
 				int sn = m_scan.nextInt();
@@ -256,7 +259,33 @@ public class QoS3Publisher {
 
 	}
 	
-	public void initBroker()
+	public void setBrokerPacketNum()
+	{
+		System.out.println("========== MQTT publish");
+		
+		String strTopic = "SETPCKNUM";
+		byte qos = (byte)0;
+		String strMessage = "" + (m_eventHandler.PACKETNUM * m_eventHandler.SUBNUM);
+//		String strMessage = "message";
+//		byte qos = (byte)3;
+		
+		boolean bDupFlag = false;
+		boolean bRetainFlag = false;
+		String strReceiver = "";
+//		int nMinNumWaitedEvents = 1;
+		
+		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
+		if(mqttManager == null)
+		{
+			System.err.println("CMMqttManager is null!");
+			return;
+		}
+		
+		mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+
+	}
+	
+	public void printBrokerResult()
 	{
 		System.out.println("========== MQTT publish");
 		
