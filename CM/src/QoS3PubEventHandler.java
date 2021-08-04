@@ -17,7 +17,7 @@ import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMMqttManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
-public class QoS3PubEventHandler implements CMAppEventHandler{
+public class QoS3PubEventHandler implements CMAppEventHandler {
 	private CMClientStub m_clientStub;
 	private long m_lDelaySum;	// for forwarding simulation
 	private long m_lStartTime;	// for delay of SNS content downloading, distributed file processing
@@ -37,13 +37,17 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 	TestTime time2;
 	
 	byte qos;
-	static final int PACKETNUM=2;
+	static final int PACKETNUM=20;
 	int SUBNUM;
 	int count1;
 	int count2;
+	int count3;
 		
 	public QoS3PubEventHandler(CMClientStub stub)
 	{
+//		super(cmInfo);
+//		m_nType = CMInfo.CM_MQTT_EVENT_HANDLER;
+		
 		m_clientStub = stub;
 		m_lDelaySum = 0;
 		m_lStartTime = 0;
@@ -63,6 +67,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		qos=(byte)-1;
 		count1=PACKETNUM;
 		count2=PACKETNUM;
+		count3=19;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -281,12 +286,12 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-			count1-=1;
-			if(count1<1 && pubEvent.getQoS()==(byte)0) { 
-				//time 1 :: rcv qos 0 pub for answer
-				time1.setEndTime();
-//				printTime_1();
-			}
+//			count1-=1;
+//			if(count1<1 && pubEvent.getQoS()==(byte)0) { 
+//				//time 1 :: rcv qos 0 pub for answer
+//				time1.setEndTime();
+////				printTime_1();
+//			}
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -299,11 +304,16 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-			count1-=1;
-			if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
-				//time 1 :: rcv qos 3 rec for answer
-				time1.setEndTime();
-//				printTime_1();
+//			count1-=1;
+//			if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
+//				//time 1 :: rcv qos 3 rec for answer
+//				time1.setEndTime();
+////				printTime_1();
+//			}
+			
+			count3-=1;
+			if(count3>0) {
+				sendPublish(pubrecEvent.getQos(), 1, "test3");
 			}
 			break;
 		case CMMqttEvent.PUBREL:
@@ -318,13 +328,13 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
 			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getQos());
-			count2-=1;
-			System.out.println("count===================== "+count2);
-			if(count2<1) {
-				//time 2 :: end.
-				time2.setEndTime();
-				printTime_2();
-			}
+//			count2-=1;
+//			System.out.println("count===================== "+count2);
+//			if(count2<1) {
+//				//time 2 :: end.
+//				time2.setEndTime();
+//				printTime_2();
+//			}
 			
 //			if(count1<1) {
 //				printTime_1();
@@ -419,5 +429,33 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		
 //		count1=PACKETNUM*SUBNUM;
 //		time1.initializeTimeSum();
+	}
+	
+	public void sendPublish(byte qos, int nMinNumWaitedEvents, String strMessage) {
+		System.out.println("========== MQTT publish");
+		
+		String strTopic = "3";
+//		String strMessage = "message";
+//		byte qos = (byte)3;
+		
+		boolean bDupFlag = false;
+		boolean bRetainFlag = false;
+		String strReceiver = "";
+//		int nMinNumWaitedEvents = 1;
+		
+		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
+		if(mqttManager == null)
+		{
+			System.err.println("CMMqttManager is null!");
+			return;
+		}
+		
+		if(qos==3) {
+			System.out.println("strTopic:"+strTopic+", strMessage:"+""+", qos:"+qos+", bDupFlag:"+bDupFlag
+					+", bRetainFlag:"+bRetainFlag+", strReceiver:"+strReceiver+", nMinNumWaitedEvents:"+1);
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+		}else {
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+		}
 	}
 }

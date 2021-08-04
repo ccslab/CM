@@ -51,6 +51,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	int sub_num;
 	int count;
 	QoS3Util util;
+	boolean startFlag;
 
 	public QoS3BrkEventHandler(CMServerStub serverStub)
 	{
@@ -67,6 +68,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		qos=(byte)-1;
 		packetnum=20;
 		count=packetnum;
+		startFlag=false;
 	}
 	
 	@Override
@@ -622,28 +624,30 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			System.out.println("[packet ID: "+pubEvent.getPacketID()
 					+"], [topic: "+pubEvent.getTopicName()+"], [msg: "
 					+pubEvent.getAppMessage()+"], [qos: "+pubEvent.getQoS()+"]");
-			
+			count-=1;
 			if (pubEvent.getQoS() == (byte) 0 && pubEvent.getTopicName().equals("SETPCKNUM")) {
 				packetnum = Integer.parseInt(pubEvent.getAppMessage());
 				count = packetnum;
+				startFlag=true;
+				System.out.println("=================================");
+				System.out.println("number of packets : " + count);
+				System.out.println("start flag : " + startFlag);
+				System.out.println("=================================");
 			}
 			else if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
 				printTime();
 			}
-			else if(pubEvent.getQoS()==(byte)3){
-				timeTest3(pubEvent);
-			}
-			else {
-				if(count<=1)
-				pubId=pubEvent.getSender();
-				//time 3(2-2)
-				time.initializeTimeSum();
+//			else if(pubEvent.getQoS()==(byte)3){
+//				timeTest3(pubEvent);
+//			}
+//			else if(count<=1) {
+//				//time 3(2-2)
+//				
+//				//byte
+////				tbyte.initializeByteSum();
+//			}
+			if(startFlag) {
 				time.setStartTime();
-				count=packetnum*sub_num;
-				//byte
-//				tbyte.initializeByteSum();
-				
-				qos=pubEvent.getQoS();
 			}
 //			testBytePub(pubEvent);
 			break;
@@ -658,7 +662,8 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-			timeTest3(pubrecEvent);
+//			time.setEndTime();
+//			timeTest3(pubrecEvent);
 			
 //			testBytePub(pubrecEvent);
 			count--;
@@ -706,6 +711,22 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	}
 	
 	public void printTime() {
+		System.out.println("================= 3(2-2) ================");
+//		System.out.println("start=========="+time.getStartTime());
+//		System.out.println("end============"+time.getEndTime());
+		
+		long sumtime=time.getEndTime()-time.getStartTime();
+		int size=packetnum*sub_num;
+		
+		System.out.println("sum_time======="+sumtime);
+		System.out.println("avr_time======="+(double)sumtime/size);
+		
+		time.initializeTimeSum();
+		time.setStartTime();
+		count=packetnum*sub_num;
+	}
+	
+	public void printTimeList() {
 		System.out.println("================= 3(2-2) ================");
 //		System.out.println("start=========="+time.getStartTime());
 //		System.out.println("end============"+time.getEndTime());
