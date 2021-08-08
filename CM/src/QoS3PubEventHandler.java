@@ -67,7 +67,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 		qos=(byte)-1;
 		count1=PACKETNUM;
 		count2=PACKETNUM;
-		count3=19;
+		count3=PACKETNUM-1;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
@@ -311,10 +311,11 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 ////				printTime_1();
 //			}
 			
-			count3-=1;
-			if(count3>0) {
-				sendPublish(pubrecEvent.getQos(), 1, "test3");
-			}
+//			count3-=1;
+//			if(count3>0) {
+//				sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
+//				
+//			}
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
@@ -339,6 +340,11 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 //			if(count1<1) {
 //				printTime_1();
 //			}
+			
+			count3-=1;
+			if(count3>0) {
+				sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
+			}
 			break;
 		case CMMqttEvent.SUBACK:
 			CMMqttEventSUBACK subackEvent = (CMMqttEventSUBACK)cme;

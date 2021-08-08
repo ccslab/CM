@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.Console;
 import java.io.InputStreamReader;
@@ -107,8 +108,10 @@ public class QoS3Publisher {
 				timeChk3_Qos2();
 				break;
 			case 331:
+				timeChk3_Qos3();
 				break;
 			case 332:
+				timeChk3_Qos3_sync();
 				break;
 			case 99:
 				printBrokerResult(); //test 3, print result
@@ -423,19 +426,26 @@ public class QoS3Publisher {
 	}
 	
 	public boolean timeChk3_Qos2(){
-//		int packetnum=m_eventHandler.PACKETNUM;
-////		int sub_num=1;
-//		String strMessage = "message";
-//		
-//		m_eventHandler.time2.initializeTimeSum();
-//		m_eventHandler.count2=m_eventHandler.PACKETNUM;
-//		
-//		System.out.println("=========== start_time2_qos2 ===========");
-//		m_eventHandler.time2.setStartTime();
-		
-//		for(int i=0;i<packetnum;i++)
-			
+		m_eventHandler.count3 = (m_eventHandler.PACKETNUM*sub_num);
 		mqttPublish((byte)2, 0, "test3");
+		return true;
+	}
+	
+	public boolean timeChk3_Qos3(){
+		m_eventHandler.count3 = (m_eventHandler.PACKETNUM*sub_num);
+		mqttPublish((byte)3, 0, "test3");
+		return true;
+	}
+	
+	public boolean timeChk3_Qos3_sync(){
+		int packetnum=m_eventHandler.PACKETNUM;
+		
+		m_eventHandler.count3=m_eventHandler.PACKETNUM*sub_num;
+		
+		for(int i=0;i<packetnum;i++) {
+			mqttSyncPublish((byte)3, 1, "test3");
+		}
+		
 		return true;
 	}
 }
