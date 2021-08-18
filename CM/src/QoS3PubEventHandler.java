@@ -42,6 +42,9 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 	int count1;
 	int count2;
 	int count3;
+	
+	int test3Qos;
+	int test3MinNumWatedEvents;
 		
 	public QoS3PubEventHandler(CMClientStub stub)
 	{
@@ -342,8 +345,9 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 //			}
 			
 			count3-=1;
+			System.out.println("=====count: "+count3+"========");
 			if(count3>0) {
-				sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
+				sendPublish((byte)test3Qos, test3MinNumWatedEvents, "test3"); //pubrecEvent.getQos()
 			}
 			break;
 		case CMMqttEvent.SUBACK:

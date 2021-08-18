@@ -29,12 +29,12 @@ public class QoS3TimeList {
 	public boolean add(String strSubscriber, long PUBRECTime, long pingpongTime)
 	{
 		QoS3PubrecList newEvent = new QoS3PubrecList(strSubscriber, PUBRECTime, pingpongTime);
-		if(find(strSubscriber) != null)
-		{
-			System.err.println("test.addtestTime3List(), the same packet ID ("+nPacketID+"-"+strSubscriber+") already exists!");
-			System.err.println(newEvent.toString());
-			return false;
-		}
+//		if(find(strSubscriber) != null)
+//		{
+//			System.err.println("test.addtestTime3List(), the same packet ID ("+nPacketID+"-"+strSubscriber+") already exists!");
+//			System.err.println(newEvent.toString());
+//			return false;
+//		}
 		return pubrecList.addElement(newEvent);
 	}
 	

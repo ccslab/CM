@@ -113,6 +113,10 @@ public class QoS3Publisher {
 			case 332:
 				timeChk3_Qos3_sync();
 				break;
+			case 98:
+				m_eventHandler.printTime_1();
+//				m_eventHandler.printTime_2();
+				break;
 			case 99:
 				printBrokerResult(); //test 3, print result
 				break;
@@ -426,26 +430,26 @@ public class QoS3Publisher {
 	}
 	
 	public boolean timeChk3_Qos2(){
-		m_eventHandler.count3 = (m_eventHandler.PACKETNUM*sub_num);
+		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
+		m_eventHandler.test3Qos = 2;
+		m_eventHandler.test3MinNumWatedEvents = 0;
 		mqttPublish((byte)2, 0, "test3");
 		return true;
 	}
 	
 	public boolean timeChk3_Qos3(){
-		m_eventHandler.count3 = (m_eventHandler.PACKETNUM*sub_num);
+		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
+		m_eventHandler.test3Qos = 3;
+		m_eventHandler.test3MinNumWatedEvents = 0;
 		mqttPublish((byte)3, 0, "test3");
 		return true;
 	}
 	
 	public boolean timeChk3_Qos3_sync(){
-		int packetnum=m_eventHandler.PACKETNUM;
-		
-		m_eventHandler.count3=m_eventHandler.PACKETNUM*sub_num;
-		
-		for(int i=0;i<packetnum;i++) {
-			mqttSyncPublish((byte)3, 1, "test3");
-		}
-		
+		m_eventHandler.count3=m_eventHandler.PACKETNUM;
+		m_eventHandler.test3Qos = 3;
+		m_eventHandler.test3MinNumWatedEvents = 1;
+		mqttSyncPublish((byte)3, 1, "test3");
 		return true;
 	}
 }
