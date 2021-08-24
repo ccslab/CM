@@ -433,6 +433,7 @@ public class QoS3Publisher {
 		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
 		m_eventHandler.test3Qos = 2;
 		m_eventHandler.test3MinNumWatedEvents = 0;
+		m_eventHandler.isSync = false;
 		mqttPublish((byte)2, 0, "test3");
 		return true;
 	}
@@ -441,6 +442,7 @@ public class QoS3Publisher {
 		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
 		m_eventHandler.test3Qos = 3;
 		m_eventHandler.test3MinNumWatedEvents = 0;
+		m_eventHandler.isSync = false;
 		mqttPublish((byte)3, 0, "test3");
 		return true;
 	}
@@ -449,7 +451,13 @@ public class QoS3Publisher {
 		m_eventHandler.count3=m_eventHandler.PACKETNUM;
 		m_eventHandler.test3Qos = 3;
 		m_eventHandler.test3MinNumWatedEvents = 1;
-		mqttSyncPublish((byte)3, 1, "test3");
+		m_eventHandler.isSync = true;
+		while(m_eventHandler.count3>0) {
+			mqttSyncPublish((byte)3, 1, "test3");
+			m_eventHandler.count3-=1;
+			System.out.println("=====count: "+m_eventHandler.count3+"========");
+		}
+		
 		return true;
 	}
 }

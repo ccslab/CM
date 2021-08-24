@@ -628,7 +628,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 					+pubEvent.getAppMessage()+"], [qos: "+pubEvent.getQoS()+"]");
 //			count-=1;
 			if (pubEvent.getQoS() == (byte) 0 && pubEvent.getTopicName().equals("SETPCKNUM")) {
-				packetnum = Integer.parseInt(pubEvent.getAppMessage());
+				packetnum = Integer.parseInt(pubEvent.getAppMessage()); //SUBNUM * PACKETNUM
 				count = packetnum;
 				startFlag=true;
 				pubId=pubEvent.getSender();

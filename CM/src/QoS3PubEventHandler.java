@@ -45,6 +45,8 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 	
 	int test3Qos;
 	int test3MinNumWatedEvents;
+	
+	boolean isSync;
 		
 	public QoS3PubEventHandler(CMClientStub stub)
 	{
@@ -319,6 +321,14 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 //				sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
 //				
 //			}
+			
+			if(!isSync) {
+				count3-=1;
+				System.out.println("=====count: "+count3+"========");
+				if(count3>0) {
+					sendPublish((byte)test3Qos, test3MinNumWatedEvents, "test3"); //pubrecEvent.getQos()
+				}
+			}
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
@@ -344,11 +354,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 //				printTime_1();
 //			}
 			
-			count3-=1;
-			System.out.println("=====count: "+count3+"========");
-			if(count3>0) {
-				sendPublish((byte)test3Qos, test3MinNumWatedEvents, "test3"); //pubrecEvent.getQos()
-			}
+			
 			break;
 		case CMMqttEvent.SUBACK:
 			CMMqttEventSUBACK subackEvent = (CMMqttEventSUBACK)cme;
