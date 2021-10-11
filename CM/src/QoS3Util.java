@@ -9,11 +9,13 @@ public class QoS3Util {
 	CMList<QoS3TimeList> testTime3List;
 	int pointingID;
 	int subscriberNum;
+	int listID;
 	
 	QoS3Util(){
 		subscriberNum = 1;
 		pointingID = -1;
 		newList();
+		listID = 0;
 //		testTime3List=new CMList<QoS3TimeList>();
 		System.out.println("list =========" + testTime3List.toString() );
 	}
@@ -107,14 +109,17 @@ public class QoS3Util {
 		if(timeEvent.count >= subscriberNum) {
 			System.out.println("======reset=====");
 			int nextID = findNext(pointingID);
-			pointingID = nextID;
-			addElement(nextID, strSubscriber, PUBRECTime);
-			return false;
+			if(nextID > 0) {
+				pointingID = nextID;
+				addElement(nextID, strSubscriber, PUBRECTime);
+				return false;
+			}
 		}
 		
 		long pingpongTime = PUBRECTime - timeEvent.getPUBLISHTime();
 		
-		timeEvent.add(strSubscriber, PUBRECTime, pingpongTime);
+		timeEvent.add(""+listID, PUBRECTime, pingpongTime);
+		listID++;
 		int nowCount = timeEvent.addCount();
 		
 		System.out.println("3 list count======== " + nowCount + ", pingpongtime=========" + pingpongTime);
@@ -167,7 +172,7 @@ public class QoS3Util {
 		}
 		
 		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/size);
+ 		System.out.println("avr_time======="+(double)sumtime/size);
 		
 		newList();
 		this.pointingID = -1;

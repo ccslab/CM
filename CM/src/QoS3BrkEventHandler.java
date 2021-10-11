@@ -641,19 +641,19 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			else if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
 				printTimeList();
 			}
-//			if(count==packetNum) {
-//				time.setStartTime();
-//			}
-			else if(pubEvent.getAppMessage().equals("test3")){
-				nTime3Id = pubEvent.getPacketID();
-				timeTest3(pubEvent);
+			if(count==packetNum) {
+				time.setStartTime();
 			}
-//			else if(count<=1) {
-//				//time 3(2-2)
-//				
-//				//byte
-////				tbyte.initializeByteSum();
+//			else if(pubEvent.getAppMessage().equals("test3")){
+//				nTime3Id = pubEvent.getPacketID();
+//				timeTest3(pubEvent);
 //			}
+			else if(count<=1) {
+				//time 3(2-2)
+				
+				//byte
+//				tbyte.initializeByteSum();
+			}
 			
 //			testBytePub(pubEvent);
 			break;
@@ -727,25 +727,27 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		return;
 	}
 	
-//	public void printTime() {
-//		System.out.println("================= 3(2-2) ================");
-//		
-//		long sumtime=time.getEndTime()-time.getStartTime();
-//		int size=packetNum*sub_num;
-//		
-//		System.out.println("sum_time======="+sumtime);
-//		System.out.println("avr_time======="+(double)sumtime/size);
-//		
-//		time.initializeTimeSum();
-//		time.setStartTime();
-//		count = packetNum;
-//	}
-	
-	public void printTimeList() {
+	public void printTime() {
 		System.out.println("================= 3(2-2) ================");
 		
-//		util.removeAll();
-		util.printList();
+		long sumtime=time.getEndTime()-time.getStartTime();
+		int size=packetNum;
+		
+		System.out.println("sum_time======="+sumtime);
+		System.out.println("avr_time======="+(double)sumtime/size);
+		
+		time.initializeTimeSum();
+		time.setStartTime();
+		count = packetNum;
+	}
+	
+	public void printTimeList() {
+		printTime();
+		
+//		System.out.println("================= 3(2-2) ================");
+//		
+////		util.removeAll();
+//		util.printList();
 	}
 	
 	public void timeTest3(CMMqttEventPUBLISH publishEvent) { //publish side
