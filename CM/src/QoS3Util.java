@@ -8,10 +8,10 @@ public class QoS3Util {
 	String usernum;
 	CMList<QoS3TimeList> testTime3List;
 	int pointingID;
-	int packetNum;
+	int subscriberNum;
 	
 	QoS3Util(){
-		packetNum = 20;
+		subscriberNum = 1;
 		pointingID = -1;
 		newList();
 //		testTime3List=new CMList<QoS3TimeList>();
@@ -104,7 +104,7 @@ public class QoS3Util {
 			return false;
 		}
 		
-		if(timeEvent.count >= packetNum) {
+		if(timeEvent.count >= subscriberNum) {
 			System.out.println("======reset=====");
 			int nextID = findNext(pointingID);
 			pointingID = nextID;

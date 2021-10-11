@@ -630,7 +630,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			if (pubEvent.getQoS() == (byte) 0 && pubEvent.getTopicName().equals("SETPCKNUM")) {
 				packetNum = Integer.parseInt(pubEvent.getAppMessage()); //SUBNUM * packetNum
 				count = packetNum;
-				util.packetNum = packetNum;
+				util.subscriberNum = packetNum/20;
 				startFlag=true;
 				pubId=pubEvent.getSender();
 				System.out.println("=================================");
@@ -727,19 +727,19 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		return;
 	}
 	
-	public void printTime() {
-		System.out.println("================= 3(2-2) ================");
-		
-		long sumtime=time.getEndTime()-time.getStartTime();
-		int size=packetNum*sub_num;
-		
-		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/size);
-		
-		time.initializeTimeSum();
-		time.setStartTime();
-		count = packetNum;
-	}
+//	public void printTime() {
+//		System.out.println("================= 3(2-2) ================");
+//		
+//		long sumtime=time.getEndTime()-time.getStartTime();
+//		int size=packetNum*sub_num;
+//		
+//		System.out.println("sum_time======="+sumtime);
+//		System.out.println("avr_time======="+(double)sumtime/size);
+//		
+//		time.initializeTimeSum();
+//		time.setStartTime();
+//		count = packetNum;
+//	}
 	
 	public void printTimeList() {
 		System.out.println("================= 3(2-2) ================");
