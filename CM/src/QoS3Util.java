@@ -7,9 +7,15 @@ public class QoS3Util {
 	String strUserName;
 	String usernum;
 	CMList<QoS3TimeList> testTime3List;
+	int pointingID;
+	int packetNum;
 	
 	QoS3Util(){
-		testTime3List=new CMList<QoS3TimeList>();
+		packetNum = 20;
+		pointingID = -1;
+		newList();
+//		testTime3List=new CMList<QoS3TimeList>();
+		System.out.println("list =========" + testTime3List.toString() );
 	}
 	
 	public String randomUserName() {
@@ -51,9 +57,34 @@ public class QoS3Util {
 		return numStr;
 	}
 	
+	//실험3 리스트 추가/삭제/검색 관련
+	public int findNextPacketId(int nPacketID) {
+		int nextPacketID = findNext(nPacketID);
+		pointingID = nextPacketID;
+		return nextPacketID;
+	}
+	
+	public int findNext(int nPacketID)
+	{
+		int nID = -1;
+		boolean pointer = false;
+		for(QoS3TimeList newEvent : testTime3List.getList())
+		{
+			nID = newEvent.getPacketID();
+			if(pointer) {
+				return nID;
+			} else if(nID == nPacketID) {
+				pointer = true;
+			}
+		}
+		return -1;
+	}
 	
 	public boolean add(int nPacketID, long PUBLISHTime)
 	{
+		if(pointingID == -1) {
+			pointingID = nPacketID;
+		}
 		QoS3TimeList newEvent = new QoS3TimeList(nPacketID, PUBLISHTime);
 		if(find(nPacketID) != null)
 		{
@@ -66,15 +97,30 @@ public class QoS3Util {
 	
 	public boolean addElement(int nPacketID, String strSubscriber, long PUBRECTime)
 	{
-		QoS3TimeList timeEvent = find(nPacketID);
+		QoS3TimeList timeEvent = find(pointingID);
 		if(timeEvent == null)
+		{
+			System.out.println("========find null");
 			return false;
+		}
+		
+		if(timeEvent.count >= packetNum) {
+			System.out.println("======reset=====");
+			int nextID = findNext(pointingID);
+			pointingID = nextID;
+			addElement(nextID, strSubscriber, PUBRECTime);
+			return false;
+		}
 		
 		long pingpongTime = PUBRECTime - timeEvent.getPUBLISHTime();
 		
 		timeEvent.add(strSubscriber, PUBRECTime, pingpongTime);
+		int nowCount = timeEvent.addCount();
 		
-		return false;
+		System.out.println("3 list count======== " + nowCount + ", pingpongtime=========" + pingpongTime);
+		System.out.println("PUBRECTime======== " + PUBRECTime + ", getPUBLISHTime=========" + timeEvent.getPUBLISHTime());
+		
+		return true;
 	}
 	
 	public QoS3TimeList find(int nPacketID)
@@ -104,6 +150,34 @@ public class QoS3Util {
 	public void removeAll()
 	{
 		testTime3List.removeAllElements();
+		return;
+	}
+	
+	public void printList()
+	{
+		long sumtime=0;
+		int size=0;
+		
+		for(QoS3TimeList newEvent : testTime3List.getList())
+		{
+			for(QoS3PubrecList recEvent : newEvent.pubrecList.getList()) {
+				sumtime += recEvent.getPingpongTime();
+			}
+			size += newEvent.pubrecList.getSize();
+		}
+		
+		System.out.println("sum_time======="+sumtime);
+		System.out.println("avr_time======="+(double)sumtime/size);
+		
+		newList();
+		this.pointingID = -1;
+		return;
+	}
+	
+	public void newList()
+	{
+		this.testTime3List = new CMList<QoS3TimeList>();
+		System.out.println("list =========" + this.testTime3List.toString() );
 		return;
 	}
 

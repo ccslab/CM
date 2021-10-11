@@ -47,7 +47,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	TestTime time;
 	TestByte tbyte;
 	byte qos;
-	int packetnum;
+	int packetNum;
 	int sub_num;
 	int count;
 	QoS3Util util;
@@ -68,8 +68,8 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		sub_num=0;
 		
 		qos=(byte)-1;
-		packetnum=20;
-		count=packetnum;
+		packetNum=20;
+		count=packetNum;
 		startFlag=false;
 	}
 	
@@ -628,8 +628,9 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 					+pubEvent.getAppMessage()+"], [qos: "+pubEvent.getQoS()+"]");
 //			count-=1;
 			if (pubEvent.getQoS() == (byte) 0 && pubEvent.getTopicName().equals("SETPCKNUM")) {
-				packetnum = Integer.parseInt(pubEvent.getAppMessage()); //SUBNUM * PACKETNUM
-				count = packetnum;
+				packetNum = Integer.parseInt(pubEvent.getAppMessage()); //SUBNUM * packetNum
+				count = packetNum;
+				util.packetNum = packetNum;
 				startFlag=true;
 				pubId=pubEvent.getSender();
 				System.out.println("=================================");
@@ -640,7 +641,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			else if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
 				printTimeList();
 			}
-//			if(count==packetnum) {
+//			if(count==packetNum) {
 //				time.setStartTime();
 //			}
 			else if(pubEvent.getAppMessage().equals("test3")){
@@ -683,7 +684,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 //				System.out.println("end============"+time.getEndTime());
 //				
 //				long sumtime=time.getEndTime()-time.getStartTime();
-//				int size=packetnum*sub_num;
+//				int size=packetNum*sub_num;
 //				
 //				System.out.println("sum_time======="+sumtime);
 //				System.out.println("avr_time======="+(double)sumtime/size);
@@ -730,34 +731,23 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		System.out.println("================= 3(2-2) ================");
 		
 		long sumtime=time.getEndTime()-time.getStartTime();
-		int size=packetnum*sub_num;
+		int size=packetNum*sub_num;
 		
 		System.out.println("sum_time======="+sumtime);
 		System.out.println("avr_time======="+(double)sumtime/size);
 		
 		time.initializeTimeSum();
 		time.setStartTime();
-		count = packetnum;
+		count = packetNum;
 	}
 	
 	public void printTimeList() {
 		System.out.println("================= 3(2-2) ================");
 		
-		long sumtime=0;
-		int size=0;
-		
-		for(QoS3TimeList newEvent : util.testTime3List.getList())
-		{
-			for(QoS3PubrecList recEvent : newEvent.pubrecList.getList()) {
-				sumtime += recEvent.getPingpongTime();
-			}
-			size += newEvent.pubrecList.getSize();
-		}
-		
-		System.out.println("sum_time======="+sumtime);
-		System.out.println("avr_time======="+(double)sumtime/size);
-		
+//		util.removeAll();
+		util.printList();
 	}
+	
 	public void timeTest3(CMMqttEventPUBLISH publishEvent) { //publish side
 		int nid=nTime3Id;
 		long time=System.currentTimeMillis();

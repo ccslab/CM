@@ -431,6 +431,7 @@ public class QoS3Publisher {
 	
 	public boolean timeChk3_Qos2(){
 		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
+//		m_eventHandler.count3 = 2;
 		m_eventHandler.test3Qos = 2;
 		m_eventHandler.test3MinNumWatedEvents = 0;
 		m_eventHandler.isSync = false;
@@ -440,6 +441,7 @@ public class QoS3Publisher {
 	
 	public boolean timeChk3_Qos3(){
 		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
+//		m_eventHandler.count3 = 2;
 		m_eventHandler.test3Qos = 3;
 		m_eventHandler.test3MinNumWatedEvents = 0;
 		m_eventHandler.isSync = false;
@@ -449,6 +451,7 @@ public class QoS3Publisher {
 	
 	public boolean timeChk3_Qos3_sync(){
 		m_eventHandler.count3=m_eventHandler.PACKETNUM;
+//		m_eventHandler.count3 = 2;
 		m_eventHandler.test3Qos = 3;
 		m_eventHandler.test3MinNumWatedEvents = 1;
 		m_eventHandler.isSync = true;
