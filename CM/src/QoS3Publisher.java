@@ -266,7 +266,11 @@ public class QoS3Publisher {
 		if(qos==3) {
 			System.out.println("strTopic:"+strTopic+", strMessage:"+strMessage+", qos:"+qos+", bDupFlag:"+bDupFlag
 					+", bRetainFlag:"+bRetainFlag+", strReceiver:"+strReceiver+", nMinNumWaitedEvents:"+nMinNumWaitedEvents);
-			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+			try {
+				mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+			} catch (Exception e) {
+				System.err.println("QoS3Publisher.mqttSyncPublish exception");
+			}
 		}else {
 			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
 		}
@@ -435,7 +439,20 @@ public class QoS3Publisher {
 		m_eventHandler.test3Qos = 2;
 		m_eventHandler.test3MinNumWatedEvents = 0;
 		m_eventHandler.isSync = false;
+		
 		mqttPublish((byte)2, 0, "test3");
+		
+//		int packetnum=m_eventHandler.PACKETNUM;
+//		String strMessage = "test3";
+//		
+//		m_eventHandler.time2.initializeTimeSum();
+//		m_eventHandler.count2=m_eventHandler.PACKETNUM;
+//		
+//		System.out.println("=========== start_time3_qos2 ===========");
+//		m_eventHandler.time2.setStartTime();
+//		
+//		for(int i=0;i<packetnum;i++)
+//			mqttPublish((byte)2, 0, strMessage);
 		return true;
 	}
 	
@@ -446,6 +463,19 @@ public class QoS3Publisher {
 		m_eventHandler.test3MinNumWatedEvents = 0;
 		m_eventHandler.isSync = false;
 		mqttPublish((byte)3, 0, "test3");
+		
+//		int packetnum=m_eventHandler.PACKETNUM;
+//		String strMessage = "test3";
+//		
+//		m_eventHandler.time2.initializeTimeSum();
+//		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
+//		
+//		System.out.println("=========== start_time2_qos3 ===========");
+//		m_eventHandler.time2.setStartTime();
+//		
+//		for(int i=0;i<packetnum;i++) {
+//			mqttPublish((byte)3, -1, strMessage);
+//		}
 		return true;
 	}
 	
@@ -460,6 +490,19 @@ public class QoS3Publisher {
 			m_eventHandler.count3-=1;
 			System.out.println("=====count: "+m_eventHandler.count3+"========");
 		}
+		
+//		int packetnum=m_eventHandler.PACKETNUM;
+//		String strMessage = "test3";
+//		
+//		m_eventHandler.time2.initializeTimeSum();
+//		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
+//		
+//		System.out.println("=========== start_time3_qos3 ===========");
+//		m_eventHandler.time2.setStartTime();
+//		
+//		for(int i=0;i<packetnum;i++) {
+//			mqttSyncPublish((byte)3, 1, strMessage);
+//		}
 		
 		return true;
 	}
