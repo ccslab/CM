@@ -76,54 +76,77 @@ public class QoS3Publisher {
 			System.err.println("Login failed!");
 			return;
 		}
+		
+		printList();
+		
 		Scanner m_scan = new Scanner(System.in);
 		int num;
 		boolean tf=true;
 		while(tf) {
-//			System.out.println(">");
 			num=m_scan.nextInt();
 			switch(num) {
 			case 0:
 				tf=false;
 				continue;
+			case 1: 
+				printList();
+				break;
 			case 12: //test 1, qos 2
+				m_eventHandler.setCommandNum(1);
 				timeChk1_Qos2();
 				break;
 			case 131: //test 1, qos 3, async
+				m_eventHandler.setCommandNum(1);
 				timeChk1_Qos3();
 				break;
 			case 132: //test 1, qos 3, sync
+				m_eventHandler.setCommandNum(1);
 				timeChk1_Qos3_sync();
 				break;
 			case 22: //test 2, qos 2
+				m_eventHandler.setCommandNum(2);
 				timeChk2_Qos2();
 				break;
 			case 231: //test 2, qos 3, async
+				m_eventHandler.setCommandNum(2);
 				timeChk2_Qos3();
 				break;
 			case 232: //test 2, qos 3, sync
+				m_eventHandler.setCommandNum(2);
 				timeChk2_Qos3_sync();
 				break;
-			case 32:
+			case 32: //test 3, qos 2
+				m_eventHandler.setCommandNum(3);
 				timeChk3_Qos2();
 				break;
-			case 331:
+			case 331: //test 3, qos 3, async
+				m_eventHandler.setCommandNum(3);
 				timeChk3_Qos3();
 				break;
-			case 332:
+			case 332: //test 3, qos 3, sync
+				m_eventHandler.setCommandNum(3);
 				timeChk3_Qos3_sync();
 				break;
-			case 98:
+			case 40:
 				m_eventHandler.printTime_1();
-//				m_eventHandler.printTime_2();
 				break;
-			case 99:
-				printBrokerResult(); //test 3, print result
+			case 41:
+				m_eventHandler.printTime_2();
 				break;
-			case 11:
-				setBrokerPacketNum(); //test 3, set packetnum (broker count)
+			case 97: //test1 print time
+				m_eventHandler.printTime_1();
 				break;
-			case 77:
+			case 98: //test2 print time
+				m_eventHandler.printTime_2();
+				break;
+			case 99: //test 3, print result
+				printBrokerResult(); 
+				break;
+			case 11: //test 3, set packetnum (broker count)
+				setBrokerPacketNum(); 
+				break;
+			case 77: //all tests, set sub numbers
+				System.out.print("enter subscriber number: ");
 				int sn = m_scan.nextInt();
 				m_eventHandler.SUBNUM = sn;
 				sub_num = sn;
@@ -131,9 +154,35 @@ public class QoS3Publisher {
 				System.out.println("number of subscribers : " + sn);
 				System.out.println("=================================");
 				break;
-				
 			}
 		}
+	}
+	
+	public void printList()
+	{
+		System.out.println("===================================================");
+		System.out.println("enter 0 for exit.");
+		System.out.println("enter 1 for this message.");
+		System.out.println("=====================time test 1===================");
+		System.out.println("12: test 1 qos 2");
+		System.out.println("131: test 1 qos 3 async");
+		System.out.println("132: test 1 qos 3 sync");
+		System.out.println("97: print result - publisher console");
+		System.out.println("=====================time test 2===================");
+		System.out.println("22: test 2 qos 2");
+		System.out.println("231: test 2 qos 3 async");
+		System.out.println("232: test 2 qos 3 sync");
+		System.out.println("98: print result - publisher console");
+		System.out.println("=====================time test 3===================");
+		System.out.println("33: test 3 qos 2");
+		System.out.println("331: test 3 qos 3 async");
+		System.out.println("332: test 3 qos 3 sync");
+		System.out.println("99: print result - broker console");
+		System.out.println("=======================byte test====================");
+		System.out.println("40: byte check on");
+		System.out.println("41: byte check off");
+		System.out.println("===================================================");
+		
 	}
 	
 	public boolean ploginDS()
@@ -336,7 +385,6 @@ public class QoS3Publisher {
 	
 	public void timeChk1_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
-//		int sub_num=1;
 		String strMessage = "return";
 		
 		m_eventHandler.time1.initializeTimeSum();
@@ -351,7 +399,6 @@ public class QoS3Publisher {
 	
 	public void timeChk1_Qos3_sync(){
 		int packetnum=m_eventHandler.PACKETNUM;
-//		int sub_num=1;
 		String strMessage = "return";
 		
 		m_eventHandler.time1.initializeTimeSum();
@@ -366,7 +413,6 @@ public class QoS3Publisher {
 	
 	public void timeChk1_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
-//		int sub_num=1;
 		String strMessage = "return";
 		
 		m_eventHandler.time1.initializeTimeSum();
@@ -382,7 +428,6 @@ public class QoS3Publisher {
 	
 	public boolean timeChk2_Qos3(){
 		int packetnum=m_eventHandler.PACKETNUM;
-//		int sub_num=1;
 		String strMessage = "message";
 		
 		m_eventHandler.time2.initializeTimeSum();
@@ -400,7 +445,6 @@ public class QoS3Publisher {
 	
 	public boolean timeChk2_Qos3_sync(){
 		int packetnum=m_eventHandler.PACKETNUM;
-//		int sub_num=1;
 		String strMessage = "message";
 		
 		m_eventHandler.time2.initializeTimeSum();
@@ -418,7 +462,6 @@ public class QoS3Publisher {
 	
 	public boolean timeChk2_Qos2(){
 		int packetnum=m_eventHandler.PACKETNUM;
-//		int sub_num=1;
 		String strMessage = "message";
 		
 		m_eventHandler.time2.initializeTimeSum();
@@ -435,53 +478,27 @@ public class QoS3Publisher {
 	
 	public boolean timeChk3_Qos2(){
 		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
-//		m_eventHandler.count3 = 2;
 		m_eventHandler.test3Qos = 2;
 		m_eventHandler.test3MinNumWatedEvents = 0;
 		m_eventHandler.isSync = false;
 		
 		mqttPublish((byte)2, 0, "test3");
 		
-//		int packetnum=m_eventHandler.PACKETNUM;
-//		String strMessage = "test3";
-//		
-//		m_eventHandler.time2.initializeTimeSum();
-//		m_eventHandler.count2=m_eventHandler.PACKETNUM;
-//		
-//		System.out.println("=========== start_time3_qos2 ===========");
-//		m_eventHandler.time2.setStartTime();
-//		
-//		for(int i=0;i<packetnum;i++)
-//			mqttPublish((byte)2, 0, strMessage);
 		return true;
 	}
 	
 	public boolean timeChk3_Qos3(){
 		m_eventHandler.count3 = (m_eventHandler.PACKETNUM);
-//		m_eventHandler.count3 = 2;
 		m_eventHandler.test3Qos = 3;
 		m_eventHandler.test3MinNumWatedEvents = 0;
 		m_eventHandler.isSync = false;
 		mqttPublish((byte)3, 0, "test3");
 		
-//		int packetnum=m_eventHandler.PACKETNUM;
-//		String strMessage = "test3";
-//		
-//		m_eventHandler.time2.initializeTimeSum();
-//		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
-//		
-//		System.out.println("=========== start_time2_qos3 ===========");
-//		m_eventHandler.time2.setStartTime();
-//		
-//		for(int i=0;i<packetnum;i++) {
-//			mqttPublish((byte)3, -1, strMessage);
-//		}
 		return true;
 	}
 	
 	public boolean timeChk3_Qos3_sync(){
 		m_eventHandler.count3=m_eventHandler.PACKETNUM;
-//		m_eventHandler.count3 = 2;
 		m_eventHandler.test3Qos = 3;
 		m_eventHandler.test3MinNumWatedEvents = 1;
 		m_eventHandler.isSync = true;
@@ -490,19 +507,6 @@ public class QoS3Publisher {
 			m_eventHandler.count3-=1;
 			System.out.println("=====count: "+m_eventHandler.count3+"========");
 		}
-		
-//		int packetnum=m_eventHandler.PACKETNUM;
-//		String strMessage = "test3";
-//		
-//		m_eventHandler.time2.initializeTimeSum();
-//		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
-//		
-//		System.out.println("=========== start_time3_qos3 ===========");
-//		m_eventHandler.time2.setStartTime();
-//		
-//		for(int i=0;i<packetnum;i++) {
-//			mqttSyncPublish((byte)3, 1, strMessage);
-//		}
 		
 		return true;
 	}

@@ -33,6 +33,7 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 	private int m_nMinNumWaitedEvents;  // for checking the completion of asynchronous castrecv service
 	private int m_nRecvReplyEvents;		// for checking the completion of asynchronous castrecv service
 	
+	int m_nCommandNum;
 	TestTime time1;
 	TestTime time2;
 	
@@ -77,6 +78,11 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 	
 	//////////////////////////////////////////////////////////////////////////////
 	// get/set methods
+	
+	public void setCommandNum(int num)
+	{
+		m_nCommandNum = num;
+	}
 	
 	public void setStartTime(long time)
 	{
@@ -291,12 +297,24 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-//			count1-=1;
-//			if(count1<1 && pubEvent.getQoS()==(byte)0) { 
-//				//time 1 :: rcv qos 0 pub for answer
-//				time1.setEndTime();
-////				printTime_1();
-//			}
+			
+			switch(m_nCommandNum) {
+			case 1:
+				count1-=1;
+				if(count1<1 && pubEvent.getQoS()==(byte)0) { 
+					//time 1 :: rcv qos 0 pub for answer
+					time1.setEndTime();
+//					printTime_1();
+				}
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			default:
+				break;
+			}
+			
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -309,26 +327,36 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-//			count1-=1;
-//			if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
-//				//time 1 :: rcv qos 3 rec for answer
-//				time1.setEndTime();
-////				printTime_1();
-//			}
 			
-			count3-=1;
-			if(count3>0) {
-				sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
-				
-			}
-			
-			if(!isSync) {
-				count3-=1;
-				System.out.println("=====count: "+count3+"========");
-				if(count3>0) {
-					sendPublish((byte)test3Qos, test3MinNumWatedEvents, "test3"); //pubrecEvent.getQos()
+			switch(m_nCommandNum) {
+			case 1:
+				count1-=1;
+				if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
+					//time 1 :: rcv qos 3 rec for answer
+					time1.setEndTime();
+//					printTime_1();
 				}
+				break;
+			case 2:
+				break;
+			case 3:
+				count3-=1;
+				if(count3>0) {
+					sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
+				}
+				
+				if(!isSync) {
+					count3-=1;
+					System.out.println("=====count: "+count3+"========");
+					if(count3>0) {
+						sendPublish((byte)test3Qos, test3MinNumWatedEvents, "test3"); //pubrecEvent.getQos()
+					}
+				}
+				break;
+			default:
+				break;
 			}
+
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
@@ -342,18 +370,28 @@ public class QoS3PubEventHandler implements CMAppEventHandler {
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
 			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getQos());
-//			count2-=1;
-//			System.out.println("count===================== "+count1);
-//			if(count2<1) {
-//				//time 2 :: end.
-//				time2.setEndTime();
-//				printTime_2();
-//			}
 			
-//			if(count1<1) {
-//				printTime_1();
-//			}
-			
+			switch(m_nCommandNum) {
+			case 1:
+				System.out.println("count===================== "+count1);
+				if(count1<1) {
+//					printTime_1();
+				}
+				break;
+			case 2:
+				count2-=1;
+				System.out.println("count===================== "+count2);
+				if(count2<1) {
+					//time 2 :: end.
+					time2.setEndTime();
+//					printTime_2();
+				}
+				break;
+			case 3:
+				break;
+			default:
+				break;
+			}
 			
 			break;
 		case CMMqttEvent.SUBACK:
