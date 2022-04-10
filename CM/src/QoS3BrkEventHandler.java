@@ -53,6 +53,8 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	QoS3Util util;
 	boolean startFlag;
 	
+	boolean byteTest;
+	
 	int nTime3Id;
 
 	public QoS3BrkEventHandler(CMServerStub serverStub)
@@ -71,6 +73,8 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 		packetNum=20;
 		count=packetNum;
 		startFlag=false;
+		
+		byteTest = false;
 	}
 	
 	@Override
@@ -641,6 +645,12 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			else if(pubEvent.getQoS()==(byte)0 && pubEvent.getTopicName().equals("COMMANDS")) {
 				printTimeList();
 			}
+			else if(pubEvent.getTopicName().equals("BYTEON")) {
+				byteTest = true;
+			}
+			else if(pubEvent.getTopicName().equals("BYTEOFF")) {
+				byteTest = false;
+			}
 			if(count==packetNum) {
 				time.setStartTime();
 			}
@@ -648,14 +658,16 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 //				nTime3Id = pubEvent.getPacketID();
 //				timeTest3(pubEvent);
 //			}
-			else if(count<=1) {
+//			else if(count<=1) {
 				//time 3(2-2)
 				
 				//byte
 //				tbyte.initializeByteSum();
-			}
+//			}
 			
-//			testBytePub(pubEvent);
+			if(byteTest) {
+				testBytePub(pubEvent, "PUBLISH");
+			}
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -671,7 +683,9 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			time.setEndTime();
 			timeTest3(pubrecEvent);
 			
-//			testBytePub(pubrecEvent);
+			if(byteTest) {
+				testBytePub(pubrecEvent, "PUBREC");
+			}
 //			--count;
 //			String recsender = pubrecEvent.getSender();
 //			System.out.println("=========== count: "+count+ " == recsender: "+recsender+" ===========");
@@ -695,14 +709,18 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrelEvent);
 			System.out.println("["+pubrelEvent.getSender()+"] sent CMMqttEventPUBREL, "
 					+ "[packet ID: "+pubrelEvent.getPacketID()+"]");
-//			testBytePub(pubrelEvent);
+			if(byteTest) {
+				testBytePub(pubrelEvent, "PUBREL");
+			}
 			break;
 		case CMMqttEvent.PUBCOMP:
 			CMMqttEventPUBCOMP pubcompEvent = (CMMqttEventPUBCOMP)cme;
 			//System.out.println("received "+pubcompEvent);
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
-			
+			if(byteTest) {
+				testBytePub(pubcompEvent, "PUBCOMP");
+			}
 			break;
 		case CMMqttEvent.SUBSCRIBE:
 			CMMqttEventSUBSCRIBE subEvent = (CMMqttEventSUBSCRIBE)cme;
@@ -770,12 +788,12 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 	}
 	
 	
-//	public int testBytePub(CMMqttEvent cme) {
-//		int iRet=cme.getByteNumTest();
+	public int testBytePub(CMMqttEvent cme, String packet) {
+		System.out.println("================= "+packet+" byte ================");
+		int iRet=cme.getByteNumTest();
 //		tbyte.addByteSum(iRet);
-//		System.out.println("================= byte ================");
 //		System.out.println("now byte====="+iRet);
 //		System.out.println("sum byte====="+tbyte.getByteSum());
-//		return iRet;
-//	}
+		return iRet;
+	}
 }

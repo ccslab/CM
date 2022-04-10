@@ -128,10 +128,10 @@ public class QoS3Publisher {
 				timeChk3_Qos3_sync();
 				break;
 			case 40:
-				m_eventHandler.printTime_1();
+				setBrokerByteOn();
 				break;
 			case 41:
-				m_eventHandler.printTime_2();
+				setBrokerByteOff();
 				break;
 			case 97: //test1 print time
 				m_eventHandler.printTime_1();
@@ -366,6 +366,52 @@ public class QoS3Publisher {
 		boolean bRetainFlag = false;
 		String strReceiver = "";
 //		int nMinNumWaitedEvents = 1;
+		
+		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
+		if(mqttManager == null)
+		{
+			System.err.println("CMMqttManager is null!");
+			return;
+		}
+		
+		mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+
+	}
+	
+	public void setBrokerByteOn()
+	{
+		System.out.println("========== MQTT publish");
+		
+		String strTopic = "BYTEON";
+		byte qos = (byte)0;
+		String strMessage = "" + (m_eventHandler.PACKETNUM * m_eventHandler.SUBNUM);
+		
+		boolean bDupFlag = false;
+		boolean bRetainFlag = false;
+		String strReceiver = "";
+		
+		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
+		if(mqttManager == null)
+		{
+			System.err.println("CMMqttManager is null!");
+			return;
+		}
+		
+		mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+
+	}
+	
+	public void setBrokerByteOff()
+	{
+		System.out.println("========== MQTT publish");
+		
+		String strTopic = "BYTEOFF";
+		byte qos = (byte)0;
+		String strMessage = "" + (m_eventHandler.PACKETNUM * m_eventHandler.SUBNUM);
+		
+		boolean bDupFlag = false;
+		boolean bRetainFlag = false;
+		String strReceiver = "";
 		
 		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
 		if(mqttManager == null)
