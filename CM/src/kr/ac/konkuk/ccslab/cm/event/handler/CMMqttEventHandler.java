@@ -1262,15 +1262,14 @@ public class CMMqttEventHandler extends CMEventHandler {
 			CMMqttEventPUBLISH storedPublish = publishHashtable.get(""+nPacketID);
 			int minNumWaitedEvents = storedPublish.getMinNumWaitedEvents();
 			
-			if (storedPublish != null && minNumWaitedEvents > -1) {
+			if (storedPublish != null && minNumWaitedEvents > 0) {
 				storedPublish.setMinNumWaitedEvents(storedPublish.getMinNumWaitedEvents() - 1);
 				publishHashtable.remove(""+nPacketID);
 				publishHashtable.put(""+nPacketID, storedPublish);
 				minNumWaitedEvents = storedPublish.getMinNumWaitedEvents();
-			}
-			
-			if(minNumWaitedEvents == 0) {
+			} else if(minNumWaitedEvents == 0) {
 				session.removeRecvUnAckPublish(nPacketID);
+				publishHashtable.remove(""+nPacketID);
 				sendPUBREC(storedPublish);
 			}
 		}
