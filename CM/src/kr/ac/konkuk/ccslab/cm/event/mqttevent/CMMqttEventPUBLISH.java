@@ -54,8 +54,6 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		// initialize varaible header
 		m_strTopicName = "";
 		m_nPacketID = 0;
-		m_strMqttReceiver = "";
-		m_strMqttSender = "";
 		
 		// initialize payload
 		m_strAppMessage = "";
@@ -261,8 +259,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		int nByteNum = 0;
 		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strTopicName.getBytes().length;	// topic name
 		nByteNum += 2;	// packet identifier
-		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttReceiver.getBytes().length;
-		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttSender.getBytes().length;
+		nByteNum += 2;	// m_nMinNumWaitedEvents
 
 		return nByteNum;
 	}
@@ -272,8 +269,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 		putStringToByteBuffer(m_strTopicName);
 		putInt2BytesToByteBuffer(m_nPacketID);
-		putStringToByteBuffer(m_strMqttReceiver);
-		putStringToByteBuffer(m_strMqttSender);
+		putInt2BytesToByteBuffer(m_nMinNumWaitedEvents);
 	}
 
 	@Override
@@ -281,8 +277,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 	{
 		m_strTopicName = getStringFromByteBuffer(buf);
 		m_nPacketID = getInt2BytesFromByteBuffer(buf);
-		m_strMqttReceiver = getStringFromByteBuffer(buf);
-		m_strMqttSender = getStringFromByteBuffer(buf);
+		m_nMinNumWaitedEvents = getInt2BytesFromByteBuffer(buf);
 	}
 
 	//////////////////////////////////////////////////
@@ -318,6 +313,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 //		int nByteNum = m_strAppMessage.getBytes().length;	// app message
 		int nByteNum = CMInfo.STRING_LEN_BYTES_LEN + m_strAppMessage.getBytes().length;	// app message
 		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strReceiver.getBytes().length;
+		
 		// this byte number does not contain the length of the string 
 		// because the length will be calculated separately.
 		return nByteNum;
@@ -342,6 +338,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 //		m_strAppMessage = new String(appMsgBytes);
 		m_strAppMessage = getStringFromByteBuffer(buf);
 		m_strReceiver = getStringFromByteBuffer(buf);
+		
 	}
 
 	//////////////////////////////////////////////////

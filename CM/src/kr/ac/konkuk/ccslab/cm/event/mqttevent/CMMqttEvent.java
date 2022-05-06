@@ -84,9 +84,6 @@ public abstract class CMMqttEvent extends CMEvent {
 	 */
 	public static final int DISCONNECT = 14;
 	
-	public String m_strMqttReceiver;	// for qos 3
-	public String m_strMqttSender;	// for qos 3
-	
 	// abstract methods
 	protected abstract int getFixedHeaderByteNum();
 	protected abstract void marshallFixedHeader();
@@ -101,8 +98,6 @@ public abstract class CMMqttEvent extends CMEvent {
 	public CMMqttEvent()
 	{
 		m_nType = CMInfo.CM_MQTT_EVENT;
-//		m_strMqttReceiver = "";
-//		m_strMqttSender = "";
 	}
 	
 	public CMMqttEvent(ByteBuffer msg)
@@ -134,8 +129,6 @@ public abstract class CMMqttEvent extends CMEvent {
 		nVarHeaderByteNum = getVarHeaderByteNum();
 		nPayloadByteNum = getPayloadByteNum();
 		nByteNum += nCMEventHeaderByteNum + nVarHeaderByteNum + nPayloadByteNum;
-//		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttReceiver.getBytes().length;
-//		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttSender.getBytes().length;
 
 		// m_nRemainLength of the fixed header is determined after getVarHeaderByteNum() and 
 		// getPayloadByteNum() are completed.
@@ -168,8 +161,6 @@ public abstract class CMMqttEvent extends CMEvent {
 		marshallFixedHeader();
 		marshallVarHeader();
 		marshallPayload();
-//		putStringToByteBuffer(m_strMqttReceiver);
-//		putStringToByteBuffer(m_strMqttSender);
 		
 		return;
 	}
@@ -181,8 +172,6 @@ public abstract class CMMqttEvent extends CMEvent {
 		unmarshallFixedHeader(buf);
 		unmarshallVarHeader(buf);
 		unmarshallPayload(buf);
-//		m_strMqttReceiver = getStringFromByteBuffer(buf);
-//		m_strMqttSender = getStringFromByteBuffer(buf);
 		
 		return;
 	}
@@ -190,36 +179,6 @@ public abstract class CMMqttEvent extends CMEvent {
 	public int getPacketID()
 	{
 		return -1;
-	}
-	
-	public void setMqttReceiver(String uName)
-	{
-		if(uName != null)
-			m_strMqttReceiver = uName;
-	}
-	
-	/**
-	 * Returns the receiver name of a file.
-	 * @return receiver name
-	 */
-	public String getMqttReceiver()
-	{
-		return m_strMqttReceiver;
-	}
-	
-	public void setMqttSender(String sName)
-	{
-		if(sName != null)
-			m_strMqttSender = sName;
-	}
-	
-	/**
-	 * Returns the sender name of a file.
-	 * @return sender name
-	 */
-	public String getMqttSender()
-	{
-		return m_strMqttSender;
 	}
 	
 	@Override

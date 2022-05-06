@@ -2,8 +2,6 @@ package kr.ac.konkuk.ccslab.cm.event.mqttevent;
 
 import java.nio.ByteBuffer;
 
-import kr.ac.konkuk.ccslab.cm.info.CMInfo;
-
 /**
  * This class represents a CM event that belongs to the variable header and payload of 
  * MQTT PUBCOMP packet.
@@ -34,8 +32,6 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 		// initialize variable header
 		m_nPacketID = 0;
 		m_qos = 0;
-		m_strMqttReceiver = "";
-		m_strMqttSender = "";
 	}
 	
 	public CMMqttEventPUBCOMP(ByteBuffer msg)
@@ -85,8 +81,6 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 		int nByteNum = 0;
 		nByteNum += 1;  // qos
 		nByteNum += 2;	// packet identifier
-		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttReceiver.getBytes().length;
-		nByteNum += CMInfo.STRING_LEN_BYTES_LEN + m_strMqttSender.getBytes().length;
 
 		return nByteNum;
 	}
@@ -96,8 +90,6 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 	{
 		putInt2BytesToByteBuffer(m_nPacketID);
 		m_bytes.put(m_qos);
-		putStringToByteBuffer(m_strMqttReceiver);
-		putStringToByteBuffer(m_strMqttSender);
 	}
 
 	@Override
@@ -105,8 +97,6 @@ public class CMMqttEventPUBCOMP extends CMMqttEventFixedHeader {
 	{
 		m_nPacketID = getInt2BytesFromByteBuffer(buf);
 		m_qos = buf.get();
-		m_strMqttReceiver = getStringFromByteBuffer(buf);
-		m_strMqttSender = getStringFromByteBuffer(buf);
 	}
 
 	//////////////////////////////////////////////////

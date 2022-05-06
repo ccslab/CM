@@ -564,7 +564,7 @@ public class CMMqttManager extends CMServiceManager {
 			System.err.println("CMMqttManager.syncPublishFromClient(), nMinNumWaitedEvents = "+nMinNumWaitedEvents);
 			return null;
 		}
-		eventSync.setMinNumWaitedEvents(nMinNumWaitedEvents);
+		eventSync.setMinNumWaitedEvents(1);
 //		eventSync.setWaitedReceiver(strReceiver);
 		session.setMinNumWaitedEvents(0); //for pubrel
 		
@@ -702,7 +702,6 @@ public class CMMqttManager extends CMServiceManager {
 			// set sender (in CM event header)
 			CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
 			pubEvent.setSender(myself.getName());
-			pubEvent.setMqttSender(sender);
 			// set fixed header
 			pubEvent.setDupFlag(bDupFlag);
 			pubEvent.setQoS((byte)sentQoS);

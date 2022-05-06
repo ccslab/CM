@@ -51,6 +51,13 @@ public class CMMqttEventHandler extends CMEventHandler {
 
 		boolean bRet = false;
 		CMMqttEvent mqttEvent = (CMMqttEvent) event;
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		switch (event.getID()) {
 		case CMMqttEvent.CONNECT:
@@ -400,6 +407,12 @@ public class CMMqttEventHandler extends CMEventHandler {
 //					System.out.println("pubEvent.getReceiver():"+pubEvent.getReceiver());
 					mqttManager.publish(pubEvent.getTopicName(), pubEvent.getAppMessage(), pubEvent.getQoS(), 
 							false, false, pubEvent.getReceiver(), pubEvent.getPacketID(), pubEvent.getSender());
+					
+					//for pubrec check:::::::::::::
+//					CMMqttSession session = null;
+//					CMMqttInfo mqttInfo = m_cmInfo.getMqttInfo();
+//					session = mqttInfo.getMqttSession();
+//					session.setMinNumWaitedEvents(0); //for pubrel
 				}else {
 					CMMqttManager mqttManager = (CMMqttManager) m_cmInfo.getServiceManagerHashtable()
 							.get(CMInfo.CM_MQTT_MANAGER);
@@ -600,8 +613,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 		CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
 		String strReceiver="";
 		recEvent.setSender(myself.getName());
-		recEvent.setMqttSender(myself.getName());
-		recEvent.setMqttReceiver(pubEvent.getMqttSender());
 		strReceiver = m_cmInfo.getInteractionInfo().getDefaultServerInfo().getServerName();
 		// set fixed header in the CMMqttEVentPUBACK constructor
 		// set variable header
@@ -628,7 +639,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// server -> pub
 		// send ack to the PUBLISH sender
 		boolean bRet = false;
-		String strPublisher = recEvent.getMqttReceiver();
+		String strPublisher = recEvent.getSender();
 		bRet = CMEventManager.unicastEvent(recEvent, strPublisher, m_cmInfo);
 		if (bRet && CMInfo._CM_DEBUG) 
 		{
@@ -643,6 +654,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		return bRet;
 	}
 	
+	/*
 	private boolean sendPUBREL(CMMqttEventPUBREL relEvent) {
 		// server -> sub
 		// send ack to the PUBLISH sender
@@ -679,7 +691,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		}
 
 		return bRet;
-	}
+	}//*/
 	
 	private boolean processPUBACK(CMMqttEvent event) {
 		// A receiver of PUBLISH event with QoS 1 sends the PUBACK event.
@@ -729,11 +741,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 	private boolean processPUBREC(CMMqttEvent event) {
 		// A receiver of PUBLISH event with QoS 2 sends the PUBACK event.
 		CMMqttEventPUBREC recEvent = (CMMqttEventPUBREC) event;
-		if(recEvent.getQos()==(byte)3) { //qos 3
-			processQoS3PUBREC(event);
-			return true;
-		}
-		
+				
 		if (CMInfo._CM_DEBUG) {
 			System.out.println("CMMqttEventHandler.processPUBREC(), received " + recEvent.toString());
 		}
@@ -747,6 +755,12 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (strSysType.equals("CLIENT")) {
 			session = mqttInfo.getMqttSession();
 		} else if (strSysType.equals("SERVER")) {
+			
+			if(recEvent.getQos()==(byte)3) { //qos 3
+				processQoS3PUBREC(event);
+				return true;
+			}
+			
 			session = mqttInfo.getMqttSessionHashtable().get(recEvent.getSender());
 		} else {
 			System.err.println("CMMqttEventHandler.processPUBREC(), wrong system type! (" + strSysType + ")");
@@ -809,10 +823,10 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// The PUBLISH sender with QoS 2 sends PUBREL in response to PUBREC.
 		CMMqttEventPUBREL relEvent = (CMMqttEventPUBREL) event;
 		
-		if(relEvent.getQos()==(byte)3) {
-			processQoS3PUBREL(relEvent);
-			return true;
-		}
+//		if(relEvent.getQos()==(byte)3) {
+//			processQoS3PUBREL(relEvent);
+//			return true;
+//		}
 		
 		if (CMInfo._CM_DEBUG) {
 			System.out.println("CMMqttEventHandler.processPUBREL(), received " + relEvent.toString());
@@ -876,10 +890,10 @@ public class CMMqttEventHandler extends CMEventHandler {
 		// The PUBLISH receiver with QoS 2 sends PUBCOMP in response to PUBREL.
 		CMMqttEventPUBCOMP compEvent = (CMMqttEventPUBCOMP) event;
 		
-		if(compEvent.getQos()==(byte)3) {
-			processQoS3PUBCOMP(compEvent);
-			return true;
-		}
+//		if(compEvent.getQos()==(byte)3) {
+//			processQoS3PUBCOMP(compEvent);
+//			return true;
+//		}
 		
 		if (CMInfo._CM_DEBUG) {
 			System.out.println("CMMqttEventHandler.processPUBCOMP(), received " + compEvent.toString());
@@ -1186,7 +1200,8 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (strSysType.equals("CLIENT")) {
 			session = mqttInfo.getMqttSession();
 		} else if (strSysType.equals("SERVER")) {
-			session = mqttInfo.getMqttSessionHashtable().get(recEvent.getMqttSender());
+			session = mqttInfo.getMqttSessionHashtable().get(recEvent.getSender());
+//			session = mqttInfo.getMqttSessionHashtable().get(recEvent.getMqttSender());
 		} else {
 			System.err.println("CMMqttEventHandler.processQoS3PUBREC(), wrong system type! (" + strSysType + ")");
 			return false;
@@ -1209,7 +1224,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 				} else {
 					String[] strRecvArr=eventSync.getWaitedReceiver().split(",");
 					for(int i=0;i<strRecvArr.length;i++) {
-						if(strRecvArr[i].equals(recEvent.getMqttSender())) {
+						if(strRecvArr[i].equals(recEvent.getSender())) {
 							eventSync.addReplyEvent(recEvent);
 							break;
 						}
@@ -1243,14 +1258,12 @@ public class CMMqttEventHandler extends CMEventHandler {
 					.getServerName();
 			// set sender (CM event header)
 			relEvent.setSender(myself.getName());
-			relEvent.setMqttSender(recEvent.getMqttReceiver());
-			relEvent.setMqttReceiver(recEvent.getMqttSender());
 			// set fixed header in the CMMqttEventPUBREL constructor
 			// set variable header
 			relEvent.setPacketID(nPacketID);
 			relEvent.setQos((byte)3);
 			
-			String strMqttReceiver = relEvent.getMqttReceiver();
+			String strMqttReceiver = relEvent.getReceiver();
 			
 			// to add PUBREL event to the session
 			if(session.findSentUnAckPubrel(nPacketID, strMqttReceiver)==null) {
@@ -1282,7 +1295,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 		return true;
 	}
 	
-	
+	/*
 	private boolean processQoS3PUBREL(CMMqttEvent event) {
 		// The PUBLISH sender with QoS 3 sends PUBREL in response to PUBREC.
 		CMMqttEventPUBREL relEvent = (CMMqttEventPUBREL) event;
@@ -1332,8 +1345,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 			CMUser myself = m_cmInfo.getInteractionInfo().getMyself();
 			// set sender (in CM event header)
 			compEvent.setSender(myself.getName());
-			compEvent.setMqttSender(myself.getName());
-			compEvent.setMqttReceiver(relEvent.getMqttSender());
 			// set fixed header in the CMMqttEventPUBCOMP constructor
 			// set variable header
 			compEvent.setPacketID(nPacketID);
@@ -1353,8 +1364,9 @@ public class CMMqttEventHandler extends CMEventHandler {
 		}
 
 		return true;
-	}
+	} //*/
 	
+	/*
 	private boolean processQoS3PUBCOMP(CMMqttEvent event) {
 		// The PUBLISH receiver with QoS 3 sends PUBCOMP in response to PUBREL.
 		CMMqttEventPUBCOMP compEvent = (CMMqttEventPUBCOMP) event;
@@ -1371,7 +1383,8 @@ public class CMMqttEventHandler extends CMEventHandler {
 		if (strSysType.equals("CLIENT")) {
 			session = mqttInfo.getMqttSession();
 		} else if (strSysType.equals("SERVER")) {
-			session = mqttInfo.getMqttSessionHashtable().get(compEvent.getMqttSender());
+			session = mqttInfo.getMqttSession();
+//			session = mqttInfo.getMqttSessionHashtable().get(compEvent.getMqttSender());
 		} else {
 			System.err.println("CMMqttEventHandler.processQoS3PUBCOMP(), wrong system type! (" + strSysType + ")");
 			return false;
@@ -1386,7 +1399,7 @@ public class CMMqttEventHandler extends CMEventHandler {
 			session.setMinNumWaitedEvents(session.getMinNumWaitedEvents()-1);
 			// to delete PUBREC from the recv-unack-pubrec list
 			int nPacketID = compEvent.getPacketID();
-			String strMqttReceiver = compEvent.getMqttSender();
+			String strMqttReceiver = compEvent.getSender();
 			boolean bRet = session.removeSentUnAckPubrel(nPacketID, strMqttReceiver);
 			if (bRet && CMInfo._CM_DEBUG) {
 				System.out.println("CMMqttEventHandler.processQoS3PUBCOMP(), deleted PUBREL event " + "with packet ID ("
@@ -1402,6 +1415,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 		}
 
 		return true;
-	}
+	} //*/
 
 }
