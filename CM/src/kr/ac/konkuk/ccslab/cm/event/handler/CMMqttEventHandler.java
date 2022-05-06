@@ -51,13 +51,6 @@ public class CMMqttEventHandler extends CMEventHandler {
 
 		boolean bRet = false;
 		CMMqttEvent mqttEvent = (CMMqttEvent) event;
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		switch (event.getID()) {
 		case CMMqttEvent.CONNECT:
