@@ -352,6 +352,7 @@ public class CMMqttEventPUBLISH extends CMMqttEventFixedHeader {
 		strBufVarHeader.append(super.toString()+", ");
 		strBufVarHeader.append("\"topicName\": \""+m_strTopicName+"\", ");
 		strBufVarHeader.append("\"packetID\": "+m_nPacketID);
+		strBufVarHeader.append("\"minNumWaitedEvents\": "+m_nMinNumWaitedEvents);
 		strBufVarHeader.append("}");
 		
 		StringBuffer strBufPayload = new StringBuffer();

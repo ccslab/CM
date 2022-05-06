@@ -779,7 +779,7 @@ public class QoS3BrkEventHandler implements CMAppEventHandler{
 
 	public void timeTest3(CMMqttEventPUBREC pubrecEvent) { //pubrec side
 		int nid=nTime3Id;
-		String sub=pubrecEvent.getMqttSender();
+		String sub=pubrecEvent.getSender();
 		long time=System.currentTimeMillis();
 		
 		boolean bRet = util.addElement(nid, sub, time);
