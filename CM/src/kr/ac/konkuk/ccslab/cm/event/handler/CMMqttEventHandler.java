@@ -1260,17 +1260,21 @@ public class CMMqttEventHandler extends CMEventHandler {
 			Hashtable<String, CMMqttEventPUBLISH> publishHashtable = mqttInfo.getMqttPublishHashtable();
 
 			CMMqttEventPUBLISH storedPublish = publishHashtable.get(""+nPacketID);
+			if (storedPublish != null) {
 			int minNumWaitedEvents = storedPublish.getMinNumWaitedEvents();
 			
-			if (storedPublish != null && minNumWaitedEvents > 0) {
-				storedPublish.setMinNumWaitedEvents(storedPublish.getMinNumWaitedEvents() - 1);
-				publishHashtable.remove(""+nPacketID);
-				publishHashtable.put(""+nPacketID, storedPublish);
-				minNumWaitedEvents = storedPublish.getMinNumWaitedEvents();
-			} else if(minNumWaitedEvents == 0) {
-				session.removeRecvUnAckPublish(nPacketID);
-				publishHashtable.remove(""+nPacketID);
-				sendPUBREC(storedPublish);
+				if (minNumWaitedEvents > 0) {
+					storedPublish.setMinNumWaitedEvents(storedPublish.getMinNumWaitedEvents() - 1);
+					publishHashtable.remove(""+nPacketID);
+					publishHashtable.put(""+nPacketID, storedPublish);
+					minNumWaitedEvents = storedPublish.getMinNumWaitedEvents();
+				}
+				
+				if(minNumWaitedEvents == 0) {
+					session.removeRecvUnAckPublish(nPacketID);
+					publishHashtable.remove(""+nPacketID);
+					sendPUBREC(storedPublish);
+				}
 			}
 		}
 		
