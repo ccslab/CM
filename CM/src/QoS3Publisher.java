@@ -434,7 +434,8 @@ public class QoS3Publisher {
 		String strMessage = "return";
 		
 		m_eventHandler.time1.initializeTimeSum();
-		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
+//		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
+		m_eventHandler.count1=m_eventHandler.PACKETNUM;
 		
 		System.out.println("=========== start_time1_qos3 ===========");
 		m_eventHandler.time1.setStartTime();
@@ -448,7 +449,7 @@ public class QoS3Publisher {
 		String strMessage = "return";
 		
 		m_eventHandler.time1.initializeTimeSum();
-		m_eventHandler.count1=m_eventHandler.PACKETNUM*sub_num;
+		m_eventHandler.count1=m_eventHandler.PACKETNUM;
 		
 		System.out.println("=========== start_time1_qos3 ===========");
 		m_eventHandler.time1.setStartTime();
@@ -477,7 +478,7 @@ public class QoS3Publisher {
 		String strMessage = "message";
 		
 		m_eventHandler.time2.initializeTimeSum();
-		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
+		m_eventHandler.count2=m_eventHandler.PACKETNUM;
 		
 		System.out.println("=========== start_time2_qos3 ===========");
 		m_eventHandler.time2.setStartTime();
@@ -494,7 +495,7 @@ public class QoS3Publisher {
 		String strMessage = "message";
 		
 		m_eventHandler.time2.initializeTimeSum();
-		m_eventHandler.count2=m_eventHandler.PACKETNUM*sub_num;
+		m_eventHandler.count2=m_eventHandler.PACKETNUM;
 		
 		System.out.println("=========== start_time2_qos3 ===========");
 		m_eventHandler.time2.setStartTime();
