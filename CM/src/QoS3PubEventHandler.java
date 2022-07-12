@@ -17,7 +17,7 @@ import kr.ac.konkuk.ccslab.cm.info.CMInfo;
 import kr.ac.konkuk.ccslab.cm.manager.CMMqttManager;
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub;
 
-public class QoS3PubEventHandler implements CMAppEventHandler{
+public class QoS3PubEventHandler implements CMAppEventHandler {
 	private CMClientStub m_clientStub;
 	private long m_lDelaySum;	// for forwarding simulation
 	private long m_lStartTime;	// for delay of SNS content downloading, distributed file processing
@@ -33,17 +33,27 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 	private int m_nMinNumWaitedEvents;  // for checking the completion of asynchronous castrecv service
 	private int m_nRecvReplyEvents;		// for checking the completion of asynchronous castrecv service
 	
+	int m_nCommandNum;
 	TestTime time1;
 	TestTime time2;
 	
 	byte qos;
 	static final int PACKETNUM=20;
-	static final int SUBNUM=50;
+	int SUBNUM;
 	int count1;
 	int count2;
+	int count3;
+	
+	int test3Qos;
+	int test3MinNumWatedEvents;
+	
+	boolean isSync;
 		
 	public QoS3PubEventHandler(CMClientStub stub)
 	{
+//		super(cmInfo);
+//		m_nType = CMInfo.CM_MQTT_EVENT_HANDLER;
+		
 		m_clientStub = stub;
 		m_lDelaySum = 0;
 		m_lStartTime = 0;
@@ -57,15 +67,22 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		m_strExt = null;
 		m_filePieces = null;
 		
+		SUBNUM=1;
 		time1=new TestTime();
 		time2=new TestTime();
 		qos=(byte)-1;
 		count1=PACKETNUM;
 		count2=PACKETNUM;
+		count3=PACKETNUM-1;
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////
 	// get/set methods
+	
+	public void setCommandNum(int num)
+	{
+		m_nCommandNum = num;
+	}
 	
 	public void setStartTime(long time)
 	{
@@ -280,12 +297,24 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 					+ "[packet ID: "+pubEvent.getPacketID()+"], [topic: "
 					+pubEvent.getTopicName()+"], [msg: "+pubEvent.getAppMessage()
 					+"], [QoS: "+pubEvent.getQoS()+"]");
-			count1-=1;
-			if(count1<1 && pubEvent.getQoS()==(byte)0) {//count2<1 && 
-				//time 1
-				time1.setEndTime();
-//				printTime_1();
+			
+			switch(m_nCommandNum) {
+			case 1:
+				count1-=1;
+				if(count1<1 && pubEvent.getQoS()==(byte)0) { 
+					//time 1 :: rcv qos 0 pub for answer
+					time1.setEndTime();
+//					printTime_1();
+				}
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			default:
+				break;
 			}
+			
 			break;
 		case CMMqttEvent.PUBACK:
 			CMMqttEventPUBACK pubackEvent = (CMMqttEventPUBACK)cme;
@@ -298,12 +327,36 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			//System.out.println("received "+pubrecEvent);
 			System.out.println("["+pubrecEvent.getSender()+"] sent CMMqttEvent.PUBREC, "
 					+ "[packet ID: "+pubrecEvent.getPacketID()+"]");
-			count1-=1;
-			if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
-				//time 1
-				time1.setEndTime();
-//				printTime_1();
+			
+			switch(m_nCommandNum) {
+			case 1:
+				count1-=1;
+				if(count1<1 && pubrecEvent.getQos()==(byte)3) {//
+					//time 1 :: rcv qos 3 rec for answer
+					time1.setEndTime();
+//					printTime_1();
+				}
+				break;
+			case 2:
+				break;
+			case 3:
+				count3-=1;
+				if(count3>0) {
+					sendPublish((byte)2, 0, "test3"); //pubrecEvent.getQos()
+				}
+				
+				if(!isSync) {
+					count3-=1;
+					System.out.println("=====count: "+count3+"========");
+					if(count3>0) {
+						sendPublish((byte)test3Qos, test3MinNumWatedEvents, "test3"); //pubrecEvent.getQos()
+					}
+				}
+				break;
+			default:
+				break;
 			}
+
 			break;
 		case CMMqttEvent.PUBREL:
 			CMMqttEventPUBREL pubrelEvent = (CMMqttEventPUBREL)cme;
@@ -317,16 +370,29 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 			System.out.println("["+pubcompEvent.getSender()+"] sent CMMqttEvent.PUBCOMP, "
 					+ "[packet ID: "+pubcompEvent.getPacketID()+"]");
 			System.out.println("pubcompEvent.getM_qos(): "+pubcompEvent.getQos());
-//			count2-=1;
-//			System.out.println("count===================== "+count2);
-//			if(count2<1) {
-//				//time 2
-//				time2.setEndTime();
-//				printTime_2();
-//			}
-			if(count1<1) {
-				printTime_1();
+			
+			switch(m_nCommandNum) {
+			case 1:
+				System.out.println("count===================== "+count1);
+				if(count1<1) {
+//					printTime_1();
+				}
+				break;
+			case 2:
+				count2-=1;
+				System.out.println("count===================== "+count2);
+				if(count2<1) {
+					//time 2 :: end.
+					time2.setEndTime();
+//					printTime_2();
+				}
+				break;
+			case 3:
+				break;
+			default:
+				break;
 			}
+			
 			break;
 		case CMMqttEvent.SUBACK:
 			CMMqttEventSUBACK subackEvent = (CMMqttEventSUBACK)cme;
@@ -415,7 +481,35 @@ public class QoS3PubEventHandler implements CMAppEventHandler{
 		System.out.println("sum_time======="+sumtime);
 		System.out.println("avr_time======="+(double)sumtime/(PACKETNUM*SUBNUM));
 		
-//		count2=PACKETNUM*SUBNUM;
-//		time2.initializeTimeSum();
+//		count1=PACKETNUM*SUBNUM;
+//		time1.initializeTimeSum();
+	}
+	
+	public void sendPublish(byte qos, int nMinNumWaitedEvents, String strMessage) {
+		System.out.println("========== MQTT publish");
+		
+		String strTopic = "3";
+//		String strMessage = "message";
+//		byte qos = (byte)3;
+		
+		boolean bDupFlag = false;
+		boolean bRetainFlag = false;
+		String strReceiver = "";
+//		int nMinNumWaitedEvents = 1;
+		
+		CMMqttManager mqttManager = (CMMqttManager)m_clientStub.findServiceManager(CMInfo.CM_MQTT_MANAGER);
+		if(mqttManager == null)
+		{
+			System.err.println("CMMqttManager is null!");
+			return;
+		}
+		
+		if(qos==3) {
+			System.out.println("strTopic:"+strTopic+", strMessage:"+""+", qos:"+qos+", bDupFlag:"+bDupFlag
+					+", bRetainFlag:"+bRetainFlag+", strReceiver:"+strReceiver+", nMinNumWaitedEvents:"+1);
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag, strReceiver, nMinNumWaitedEvents);
+		}else {
+			mqttManager.publish(strTopic, strMessage, qos, bDupFlag, bRetainFlag);
+		}
 	}
 }

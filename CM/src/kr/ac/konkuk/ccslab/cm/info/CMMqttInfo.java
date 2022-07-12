@@ -2,9 +2,7 @@ package kr.ac.konkuk.ccslab.cm.info;
 
 import java.util.Hashtable;
 
-import kr.ac.konkuk.ccslab.cm.entity.CMList;
 import kr.ac.konkuk.ccslab.cm.entity.CMMqttSession;
-import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEvent;
 import kr.ac.konkuk.ccslab.cm.event.mqttevent.CMMqttEventPUBLISH;
 
 /**
@@ -20,12 +18,16 @@ public class CMMqttInfo {
 	Hashtable<String, CMMqttSession> m_mqttSessionHashtable;
 	// mqtt retain event (4 server) (topic, PUBLISH event) pair
 	Hashtable<String, CMMqttEventPUBLISH> m_mqttRetainHashtable;
+	// for upgraded qos 3
+	Hashtable<String, CMMqttEventPUBLISH> m_mqttPublishHashtable;
 	
+
 	public CMMqttInfo()
 	{
 		m_mqttSession = null;
 		m_mqttSessionHashtable = new Hashtable<String, CMMqttSession>();
 		m_mqttRetainHashtable = new Hashtable<String, CMMqttEventPUBLISH>();
+		m_mqttPublishHashtable = new Hashtable<String, CMMqttEventPUBLISH>();
 	}
 	
 	// setter/getter
@@ -57,5 +59,13 @@ public class CMMqttInfo {
 	public synchronized Hashtable<String, CMMqttEventPUBLISH> getMqttRetainHashtable()
 	{
 		return m_mqttRetainHashtable;
+	}
+	
+	public Hashtable<String, CMMqttEventPUBLISH> getMqttPublishHashtable() {
+		return m_mqttPublishHashtable;
+	}
+
+	public void setMqttPublishHashtable(Hashtable<String, CMMqttEventPUBLISH> publishHashtable) {
+		this.m_mqttPublishHashtable = publishHashtable;
 	}
 }
