@@ -103,6 +103,18 @@ public class QoS3Publisher {
 				m_eventHandler.setCommandNum(1);
 				timeChk1_Qos3_sync();
 				break;
+			case 14: // test 1 qos 2: query every 1 sec, total 20 min
+				m_eventHandler.setCommandNum(1);
+				energyChk1_QoS2();
+				break;
+			case 151: // test 1 qos 3 async: query every 1 sec, total 20 min
+				m_eventHandler.setCommandNum(1);
+				energyChk1_QoS3();
+				break;
+			case 152: // test 1 qos 3 sync: query every 1 sec, total 20 min
+				m_eventHandler.setCommandNum(1);
+				energyChk1_QoS3_sync();
+				break;
 			case 22: //test 2, qos 2
 				m_eventHandler.setCommandNum(2);
 				timeChk2_Qos2();
@@ -168,6 +180,9 @@ public class QoS3Publisher {
 		System.out.println("131: test 1 qos 3 async");
 		System.out.println("132: test 1 qos 3 sync");
 		System.out.println("97: print result - publisher console");
+		System.out.println("14: test 1 qos 2: query every 1 sec, total 20 min");
+		System.out.println("151: test 1 qos 3 async: query every 1 sec, total 20 min");
+		System.out.println("152: test 1 qos 3 sync: query every 1 sec, total 20 min");
 		System.out.println("=====================time test 2===================");
 		System.out.println("22: test 2 qos 2");
 		System.out.println("231: test 2 qos 3 async");
@@ -471,6 +486,72 @@ public class QoS3Publisher {
 		for(int i=0;i<packetnum;i++) {
 			mqttPublish((byte)2, 0, strMessage);
 		}
+	}
+	
+	public void energyChk1_QoS2() {
+		int packetnum = 1200; // 1200 * 1sec = 1200 sec = 20 min
+		String strMessage = "return";
+		
+		m_eventHandler.time1.initializeTimeSum();
+		m_eventHandler.count1 = 1200;
+		
+		System.out.println("========== start energyChk1 QoS 2 ==========");
+		m_eventHandler.time1.setStartTime();
+		
+		for(int i = 0; i < packetnum; i++) {
+			mqttPublish((byte)2, 0, strMessage);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("========== end energyChk1 QoS 2 ==========");
+	}
+	
+	public void energyChk1_QoS3() {
+		int packetnum = 1200; // 1200 * 1sec = 1200 sec = 20 min
+		String strMessage = "return";
+		
+		m_eventHandler.time1.initializeTimeSum();
+		m_eventHandler.count1 = 1200;
+		
+		System.out.println("========== start energyChk1 QoS 3 ==========");
+		m_eventHandler.time1.setStartTime();
+		
+		for(int i = 0; i < packetnum; i++) {
+			mqttPublish((byte)3, -1, strMessage);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("========== end energyChk1 QoS 3 ==========");
+	}
+	
+	public void energyChk1_QoS3_sync() {
+		int packetnum = 1200; // 1200 * 1sec = 1200 sec = 20 min
+		String strMessage = "return";
+		
+		m_eventHandler.time1.initializeTimeSum();
+		m_eventHandler.count1 = 1200;
+		
+		System.out.println("========== start energyChk1 QoS 3 sync ==========");
+		m_eventHandler.time1.setStartTime();
+		
+		for(int i = 0; i < packetnum; i++) {
+			mqttPublish((byte)3, -1, strMessage);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("========== end energyChk1 QoS 3 sync ==========");
 	}
 	
 	public boolean timeChk2_Qos3(){
